@@ -1,0 +1,26 @@
+{
+  "plugins": [
+    "transform-flow-strip-types",
+    "add-react-displayname",
+    "transform-decorators-legacy",
+    ["transform-builtin-extend", {
+        "globals": ["Error", "Array"]
+    }]
+  ],
+  "presets": ["es2015", "stage-0", "react"],
+  "env": {
+    "development": {
+      "presets": []
+    },
+    "extract": {
+      "plugins": [
+        ["c-3po", {
+          "extract": {
+            "output": "locales/metabase-frontend.pot"
+          },
+          "discover": ["t", "jt"]
+        }]
+      ]
+    }
+  }
+}
