@@ -132,7 +132,7 @@ export const getSectionIsArchive = createSelector(
 );
 
 const sections = [
-    { id: "all",       name: t`All queries`,   icon: "all" },
+    { id: "all",       name: t`All questions`,   icon: "all" },
     { id: "fav",       name: t`Favorites`,       icon: "star" },
     { id: "recent",    name: t`Recently viewed`, icon: "recents" },
     { id: "mine",      name: t`Saved by me`,     icon: "mine" },

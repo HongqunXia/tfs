@@ -17,7 +17,6 @@ if (window.MetabaseLocalization) {
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { OidcProvider } from 'redux-oidc';
 
 import MetabaseAnalytics, { registerAnalyticsClickListener } from "metabase/lib/analytics";
 import MetabaseSettings from "metabase/lib/settings";
@@ -31,8 +30,6 @@ import { refreshSiteSettings } from "metabase/redux/settings";
 import { Router, useRouterHistory } from "react-router";
 import { createHistory } from 'history'
 import { syncHistoryWithStore } from 'react-router-redux';
-
-import userManager from './auth/userManager';
 
 // remove trailing slash
 const BASENAME = window.MetabaseRoot.replace(/\/+$/, "");
@@ -50,11 +47,9 @@ function _init(reducers, getRoutes, callback) {
 
     ReactDOM.render(
         <Provider store={store}>
-        <OidcProvider store={store} userManager={userManager}>
           <Router history={history}>
             {routes}
           </Router>
-          </OidcProvider>
         </Provider>
     , document.getElementById('root'));
 

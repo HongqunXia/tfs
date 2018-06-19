@@ -166,10 +166,6 @@ export default class SettingsEditorApp extends Component {
                             updateSetting={this.updateSetting}
                         />
                     )
-                } else if (this.props.params.authType === 'softheon') {
-                    return (
-                        <div>HI!</div>
-                    )
                 }
             } else {
                 return (<SettingsAuthenticationOptions />)

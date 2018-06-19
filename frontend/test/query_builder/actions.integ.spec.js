@@ -37,7 +37,7 @@ describe("QueryBuilder", () => {
                 .question()
         })
 
-        describe("for unsaved queries", () => {
+        describe("for unsaved questions", () => {
             it("completes successfully", async () => {
                 const location = urlParse(unsavedOrderCountQuestion.getUrl())
                 await store.dispatch(initializeQB(location, {}))
@@ -60,7 +60,7 @@ describe("QueryBuilder", () => {
                 expect(getQueryResults(store.getState()) !== null).toBe(true)
             })
         })
-        describe("for saved queries", async () => {
+        describe("for saved questions", async () => {
             describe("with clean state", () => {
                 it("completes successfully", async () => {
                     const location = urlParse(savedCleanQuestion.getUrl(savedCleanQuestion))

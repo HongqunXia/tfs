@@ -28,7 +28,9 @@ const emptyStateData = {
     title: t`Metrics are the official numbers that your team cares about`,
     adminMessage: t`Defining common metrics for your team makes it even easier to ask questions`,
     message: t`Metrics will appear here once your admins have created some`,
-    image: "app/assets/img/metrics-list"
+    image: "app/assets/img/metrics-list",
+    adminAction: t`Learn how to create metrics`,
+    adminLink: "http://www.metabase.com/docs/latest/administration-guide/07-segments-and-metrics.html"
 }
 
 const mapStateToProps = (state, props) => ({

@@ -55,20 +55,20 @@ export default class PreferencesStep extends Component {
                     <StepTitle title={stepText} circleText={"3"} />
                     <form onSubmit={this.formSubmitted.bind(this)} noValidate>
                         <div className="Form-field Form-offset">
-                            {t`In order to help us improve Metabase, we'd like to collect certain data about usage through Google Analytics.`} <a className="link" href={""+tag+"/information-collection.html"} target="_blank">{t`Here's a full list of everything we track and why.`}</a>
+                            {t`In order to help us improve Metabase, we'd like to collect certain data about usage through Google Analytics.`} <a className="link" href={"http://www.metabase.com/docs/"+tag+"/information-collection.html"} target="_blank">{t`Here's a full list of everything we track and why.`}</a>
                         </div>
 
                         <div className="Form-field Form-offset mr4">
                             <div style={{borderWidth: "2px"}} className="flex align-center bordered rounded p2">
                                 <Toggle value={allowTracking} onChange={this.toggleTracking.bind(this)} className="inline-block" />
-                                <span className="ml1">{t`Allow Softheon to anonymously collect usage events`}</span>
+                                <span className="ml1">{t`Allow Metabase to anonymously collect usage events`}</span>
                             </div>
                         </div>
 
                         { allowTracking ?
                             <div className="Form-field Form-offset">
                                 <ul style={{listStyle: "disc inside", lineHeight: "200%"}}>
-                                    <li>{jt`Softheon ${<span style={{fontWeight: "bold"}}>never</span>} collects anything about your data or question results.`}</li>
+                                    <li>{jt`Metabase ${<span style={{fontWeight: "bold"}}>never</span>} collects anything about your data or question results.`}</li>
                                     <li>{t`All collection is completely anonymous.`}</li>
                                     <li>{t`Collection can be turned off at any point in your admin settings.`}</li>
                                 </ul>

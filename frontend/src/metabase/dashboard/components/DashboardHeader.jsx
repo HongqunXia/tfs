@@ -201,8 +201,8 @@ export default class DashboardHeader extends Component {
                     key="add"
                     ref="addQuestionModal"
                     triggerElement={
-                        <Tooltip tooltip="Add a query">
-                            <span data-metabase-event="Dashboard;Add Card Modal" title="Add a query to this dashboard">
+                        <Tooltip tooltip="Add a question">
+                            <span data-metabase-event="Dashboard;Add Card Modal" title="Add a question to this dashboard">
                                 <Icon className={cx("text-brand-hover cursor-pointer", { "Icon--pulse": isEmpty })} name="add" size={16} />
                             </span>
                         </Tooltip>

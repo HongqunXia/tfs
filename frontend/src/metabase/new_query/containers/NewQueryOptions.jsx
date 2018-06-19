@@ -132,7 +132,7 @@ export class NewQueryOptions extends Component {
                                 {/*TODO: Move illustrations to the new location in file hierarchy. At the same time put an end to the equal-size-@2x ridicule. */}
                                 <NewQueryOption
                                     image="/app/img/query_builder_illustration"
-                                    title={ showCustomInsteadOfNewQuestionText ? t`Custom` : t`New query`}
+                                    title={ showCustomInsteadOfNewQuestionText ? t`Custom` : t`New question`}
                                     description={t`Use the simple question builder to see trends, lists of things, or to create your own metrics.`}
                                     width={180}
                                     to={this.getGuiQueryUrl}
