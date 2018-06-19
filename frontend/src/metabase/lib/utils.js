@@ -1,4 +1,5 @@
 import generatePassword from "password-generator";
+import { t } from 'c-3po';
 
 function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -43,7 +44,7 @@ var MetabaseUtils = {
 
     // pretty limited.  just does 0-9 for right now.
     numberToWord: function(num) {
-        var names = ["zero","one","two","three","four","five","six","seven","eight","nine"];
+        var names = [t`zero`,t`one`,t`two`,t`three`,t`four`,t`five`,t`six`,t`seven`,t`eight`,t`nine`];
 
         if (num >= 0 && num <= 9) {
             return names[num];
@@ -83,7 +84,7 @@ var MetabaseUtils = {
         return JSON.parse(JSON.stringify(a));
     },
 
-    // this should correctly compare all version formats Softheon uses, e.x.
+    // this should correctly compare all version formats Metabase uses, e.x.
     // 0.0.9, 0.0.10-snapshot, 0.0.10-alpha1, 0.0.10-rc1, 0.0.10-rc2, 0.0.10-rc10
     // 0.0.10, 0.1.0, 0.2.0, 0.10.0, 1.1.0
     compareVersions: function(aVersion, bVersion) {

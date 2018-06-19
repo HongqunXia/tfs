@@ -33,7 +33,7 @@ const MetricSidebar = ({
                 <SidebarItem key={`/reference/metrics/${metric.id}/questions`} 
                              href={`/reference/metrics/${metric.id}/questions`} 
                              icon="all" 
-                             name={t`Queries about ${metric.name}`} />
+                             name={t`Questions about ${metric.name}`} />
              { user && user.is_superuser &&
 
                 <SidebarItem key={`/reference/metrics/${metric.id}/revisions`}

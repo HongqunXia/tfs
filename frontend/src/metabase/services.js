@@ -142,7 +142,7 @@ export const MetabaseApi = {
     // table_sync_metadata:        POST("/api/table/:tableId/sync"),
     table_rescan_values:       POST("/api/table/:tableId/rescan_values"),
     table_discard_values:      POST("/api/table/:tableId/discard_values"),
-    // field_get:                   GET("/api/field/:fieldId"),
+    field_get:                   GET("/api/field/:fieldId"),
     // field_summary:               GET("/api/field/:fieldId/summary"),
     field_values:                GET("/api/field/:fieldId/values"),
     field_values_update:        POST("/api/field/:fieldId/values"),
@@ -228,8 +228,7 @@ export const LabelApi = {
 
 export const SessionApi = {
     create:                     POST("/api/session"),
-    // createWithGoogleAuth:       POST("/api/session/google_auth"),
-    createWithGoogleAuth:       POST("/api/session/softheon_auth"),
+    createWithGoogleAuth:       POST("/api/session/google_auth"),
     delete:                   DELETE("/api/session"),
     properties:                  GET("/api/session/properties"),
     forgot_password:            POST("/api/session/forgot_password"),

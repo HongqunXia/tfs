@@ -10,10 +10,13 @@ type Props = {
 }
 
 const LogoBadge = ({ dark }: Props) =>
-    <a href="http://www.softheon.com/" target="_blank" className="h4 flex text-bold align-center no-decoration">
-        <img src="https://www.softheon.com/HTMLCache/Resources/64x64-logo-01.png" width={64} height={64} />
+    <a href="http://www.metabase.com/" target="_blank" className="h4 flex text-bold align-center no-decoration">
+        <LogoIcon
+            size={28}
+            dark={dark}
+        />
         <span className="text-small">
-            <span className="ml1 text-grey-3">Powered by</span> <span className={cx({ "text-brand": !dark }, { "text-white": dark })}>Softheon</span>
+            <span className="ml1 text-grey-3">Powered by</span> <span className={cx({ "text-brand": !dark }, { "text-white": dark })}>Metabase</span>
         </span>
     </a>
 

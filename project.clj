@@ -21,8 +21,6 @@
                  [org.clojure/math.numeric-tower "0.0.4"]             ; math functions like `ceil`
                  [org.clojure/tools.logging "0.3.1"]                  ; logging framework
                  [org.clojure/tools.namespace "0.2.10"]
-                 [org.clojure/data.json "0.2.6"]
-                 [base64-clj "0.1.1"]
                  [amalloy/ring-buffer "1.2.1"
                   :exclusions [org.clojure/clojure
                                org.clojure/clojurescript]]            ; fixed length queue implementation, used in log buffering
@@ -154,7 +152,8 @@
                    :aot [metabase.logger]}                            ; Log appender class needs to be compiled for log4j to use it
              :ci {:jvm-opts ["-Xmx3g"]}
              :reflection-warnings {:global-vars {*warn-on-reflection* true}} ; run `lein check-reflection-warnings` to check for reflection warnings
-             :expectations {:injections [(require 'metabase.test-setup)]
+             :expectations {:injections [(require 'metabase.test-setup  ; for test setup stuff
+                                                  'metabase.test.util)] ; for the toucan.util.test default values for temp models
                             :resource-paths ["test_resources"]
                             :env {:mb-test-setting-1 "ABCDEFG"
                                   :mb-run-mode "test"}

@@ -19,7 +19,6 @@ import LoginApp from "metabase/auth/containers/LoginApp.jsx";
 import LogoutApp from "metabase/auth/containers/LogoutApp.jsx";
 import PasswordResetApp from "metabase/auth/containers/PasswordResetApp.jsx";
 import GoogleNoAccount from "metabase/auth/components/GoogleNoAccount.jsx";
-import CallbackPage from "metabase/auth/containers/CallBack.jsx";
 
 // main app containers
 import HomepageApp from "metabase/home/containers/HomepageApp.jsx";
@@ -179,7 +178,6 @@ export const getRoutes = (store) =>
                 <Route path="forgot_password" component={ForgotPasswordApp} />
                 <Route path="reset_password/:token" component={PasswordResetApp} />
                 <Route path="google_no_mb_account" component={GoogleNoAccount} />
-                <Route path="callback" component={CallbackPage} />
             </Route>
 
             {/* MAIN */}

@@ -3,6 +3,10 @@
 import 'babel-polyfill';
 import 'number-to-locale-string';
 
+// If enabled this monkeypatches `t` and `jt` to return blacked out
+// strings/elements to assist in finding untranslated strings.
+import "metabase/lib/i18n-debug";
+
 // make the i18n function "t" global so we don't have to import it in basically every file
 import { t, jt } from "c-3po";
 global.t = t;
@@ -17,7 +21,6 @@ if (window.MetabaseLocalization) {
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { OidcProvider } from 'redux-oidc';
 
 import MetabaseAnalytics, { registerAnalyticsClickListener } from "metabase/lib/analytics";
 import MetabaseSettings from "metabase/lib/settings";
@@ -31,8 +34,6 @@ import { refreshSiteSettings } from "metabase/redux/settings";
 import { Router, useRouterHistory } from "react-router";
 import { createHistory } from 'history'
 import { syncHistoryWithStore } from 'react-router-redux';
-
-import userManager from './auth/userManager';
 
 // remove trailing slash
 const BASENAME = window.MetabaseRoot.replace(/\/+$/, "");
@@ -50,11 +51,9 @@ function _init(reducers, getRoutes, callback) {
 
     ReactDOM.render(
         <Provider store={store}>
-        <OidcProvider store={store} userManager={userManager}>
           <Router history={history}>
             {routes}
           </Router>
-          </OidcProvider>
         </Provider>
     , document.getElementById('root'));
 

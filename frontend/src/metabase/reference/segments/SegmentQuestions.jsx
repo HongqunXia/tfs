@@ -35,7 +35,7 @@ import * as metadataActions from "metabase/redux/metadata";
 
 const emptyStateData = (table, segment) =>{  
     return {
-        message: t`Queries about this segment will appear here as they're added`,
+        message: t`Questions about this segment will appear here as they're added`,
         icon: "all",
         action: t`Ask a question`,
         link: getQuestionUrl({
@@ -79,7 +79,7 @@ export default class SegmentQuestions extends Component {
         return (
             <div style={style} className="full">
                 <ReferenceHeader 
-                    name={t`Queries about ${this.props.segment.name}`}
+                    name={t`Questions about ${this.props.segment.name}`}
                     type='questions'
                     headerIcon="segment"
                 />

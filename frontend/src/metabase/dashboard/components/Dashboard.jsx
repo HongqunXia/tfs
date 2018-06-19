@@ -221,7 +221,7 @@ export default class Dashboard extends Component {
                                 <div className="absolute z1 top bottom left right flex flex-column layout-centered">
                                     <span className="QuestionCircle">?</span>
                                     <div className="text-normal mt3 mb1">This dashboard is looking empty.</div>
-                                    <div className="text-normal text-grey-2">Add a query to start making it useful!</div>
+                                    <div className="text-normal text-grey-2">Add a question to start making it useful!</div>
                                 </div>
                                 :
                                 <DashboardGrid

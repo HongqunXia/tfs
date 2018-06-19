@@ -26,7 +26,14 @@ export const CollectionEmptyState = () =>
     <div className="flex align-center p2 mt4 bordered border-med border-brand rounded bg-grey-0 text-brand">
         <Icon name="collection" size={32} className="mr2"/>
         <div className="flex-full">
-            <h3>{t`Create collections for your saved queries`}</h3>
+            <h3>{t`Create collections for your saved questions`}</h3>
+            <div className="mt1">
+                {t`Collections help you organize your questions and allow you to decide who gets to see what.`}
+                {" "}
+                <a href="http://www.metabase.com/docs/latest/administration-guide/06-collections.html" target="_blank">
+                    {t`Learn more`}
+                </a>
+            </div>
         </div>
         <Link to="/collections/create">
             <Button primary>{t`Create a collection`}</Button>

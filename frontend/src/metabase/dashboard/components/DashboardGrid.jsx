@@ -176,10 +176,6 @@ export default class DashboardGrid extends Component {
         this.setState({ addSeriesModalDashCard: dc });
     }
 
-    onRefresh(dc) {
-        this.props.fetchCardData(dc.card, dc, { reload: true, clear: true })
-    }
-
     renderDashCard(dc, isMobile) {
         return (
             <DashCard
@@ -193,8 +189,7 @@ export default class DashboardGrid extends Component {
                 isEditingParameter={this.props.isEditingParameter}
                 isFullscreen={this.props.isFullscreen}
                 isMobile={isMobile}
-                onRemove={this.onDashCardRemove.bind(this, dc)} 
-                onRefresh={this.onRefresh.bind(this,dc)}               
+                onRemove={this.onDashCardRemove.bind(this, dc)}
                 onAddSeries={this.onDashCardAddSeries.bind(this, dc)}
                 onUpdateVisualizationSettings={this.props.onUpdateDashCardVisualizationSettings.bind(this, dc.id)}
                 onReplaceAllVisualizationSettings={this.props.onReplaceAllDashCardVisualizationSettings.bind(this, dc.id)}

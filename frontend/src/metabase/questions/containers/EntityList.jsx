@@ -57,9 +57,9 @@ const mapDispatchToProps = {
 const SECTIONS = [
     {
         id: 'all',
-        name: t`All queries`,
+        name: t`All questions`,
         icon: 'all',
-        empty: t`No queries have been saved yet.`,
+        empty: t`No questions have been saved yet.`,
     },
     {
         id: 'fav',

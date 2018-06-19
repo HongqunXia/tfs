@@ -60,7 +60,6 @@ export default class DashCard extends Component {
             isEditingParameter,
             onAddSeries,
             onRemove,
-            onRefresh,
             navigateToNewCardFromDashboard,
             metadata
         } = this.props;
@@ -83,7 +82,7 @@ export default class DashCard extends Component {
         const usuallyFast = _.every(series, (s) => s.isUsuallyFast);
         const isSlow = loading && _.some(series, (s) => s.isSlow) && (usuallyFast ? "usually-fast" : "usually-slow");
         const errors = series.map(s => s.error).filter(e => e);
-        
+
         let errorMessage, errorIcon;
         if (_.any(errors, e => e && e.status === 403)) {
             errorMessage = ERROR_MESSAGE_PERMISSION;
@@ -110,7 +109,7 @@ export default class DashCard extends Component {
                     errorIcon={errorIcon}
                     isSlow={isSlow}
                     expectedDuration={expectedDuration}
-                    series={series}
+                    rawSeries={series}
                     showTitle
                     isDashboard
                     isEditing={isEditing}
@@ -121,8 +120,7 @@ export default class DashCard extends Component {
                             onRemove={onRemove}
                             onAddSeries={onAddSeries}
                             onReplaceAllVisualizationSettings={this.props.onReplaceAllVisualizationSettings}
-                        /> : <DashCardRefreshButton 
-                                onRefresh={onRefresh} />
+                        /> : undefined
                     }
                     onUpdateVisualizationSettings={this.props.onUpdateVisualizationSettings}
                     replacementContent={isEditingParameter && <DashCardParameterMapper dashcard={dashcard} />}
@@ -148,11 +146,6 @@ const DashCardActionButtons = ({ series, onRemove, onAddSeries, onReplaceAllVisu
         <RemoveButton onRemove={onRemove} />
     </span>
 
-const DashCardRefreshButton = ({onRefresh}) =>
-        <span>
-            <RefreshButton onRefresh={onRefresh} />
-        </span>
-
 const ChartSettingsButton = ({ series, onReplaceAllVisualizationSettings }) =>
     <ModalWithTrigger
         wide tall
@@ -170,11 +163,6 @@ const RemoveButton = ({ onRemove }) =>
     <a className="text-grey-2 text-grey-4-hover " data-metabase-event="Dashboard;Remove Card Modal" onClick={onRemove} style={HEADER_ACTION_STYLE}>
         <Icon name="close" size={HEADER_ICON_SIZE} />
     </a>
-
-const RefreshButton = ({onRefresh}) =>
-        <a className="text-grey-2 text-grey-4-hover" data-metabase-event="Dashboard;Refresh Card Modal" onClick={onRefresh} style={HEADER_ACTION_STYLE}>
-            <Icon name="refresh" size={HEADER_ICON_SIZE} />
-        </a>
 
 const AddSeriesButton = ({ series, onAddSeries }) =>
     <a

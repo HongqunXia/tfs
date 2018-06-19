@@ -14,8 +14,6 @@ import { refreshCurrentUser } from "metabase/redux/user";
 
 import { SessionApi } from "metabase/services";
 
-import userManager from "./userManager";
-
 
 // login
 export const LOGIN = "metabase/auth/LOGIN";
@@ -48,48 +46,23 @@ export const login = createThunkAction(LOGIN, function(credentials, redirectUrl)
 export const LOGIN_GOOGLE = "metabase/auth/LOGIN_GOOGLE";
 export const loginGoogle = createThunkAction(LOGIN_GOOGLE, function(googleUser, redirectUrl) {
     return async function(dispatch, getState) {
-        // try {
-        //     let newSession = await SessionApi.createWithGoogleAuth({
-        //         token: googleUser.getAuthResponse().id_token
-        //     });
-
-        //     // since we succeeded, lets set the session cookie
-        //     MetabaseCookies.setSessionCookie(newSession.id);
-
-        //     MetabaseAnalytics.trackEvent('Auth', 'Google Auth Login');
-
-        //     // TODO: redirect after login (carry user to intended destination)
-        //     await dispatch(refreshCurrentUser());
-        //     dispatch(push(redirectUrl || "/"));
-
-        // } catch (error) {
-        //     clearGoogleAuthCredentials();
-        //     // If we see a 428 ("Precondition Required") that means we need to show the "No Softheon account exists for this Google Account" page
-        //     if (error.status === 428) {
-        //         dispatch(push("/auth/google_no_mb_account"));
-        //     } else {
-        //         return error;
-        //     }
-        // }
         try {
-            if(googleUser.id_token) {
-                let newSession = await SessionApi.createWithGoogleAuth({
-                    token: googleUser.id_token,
-                    access_token: googleUser.access_token
-                });
-    
-                // since we succeeded, lets set the session cookie
-                MetabaseCookies.setSessionCookie(newSession.id);
-    
-                MetabaseAnalytics.trackEvent('Auth', 'Google Auth Login');
-    
-                // TODO: redirect after login (carry user to intended destination)
-                await dispatch(refreshCurrentUser());
-                dispatch(push(redirectUrl || "/"));
-            }
+            let newSession = await SessionApi.createWithGoogleAuth({
+                token: googleUser.getAuthResponse().id_token
+            });
+
+            // since we succeeded, lets set the session cookie
+            MetabaseCookies.setSessionCookie(newSession.id);
+
+            MetabaseAnalytics.trackEvent('Auth', 'Google Auth Login');
+
+            // TODO: redirect after login (carry user to intended destination)
+            await dispatch(refreshCurrentUser());
+            dispatch(push(redirectUrl || "/"));
+
         } catch (error) {
             clearGoogleAuthCredentials();
-            // If we see a 428 ("Precondition Required") that means we need to show the "No Softheon account exists for this Google Account" page
+            // If we see a 428 ("Precondition Required") that means we need to show the "No Metabase account exists for this Google Account" page
             if (error.status === 428) {
                 dispatch(push("/auth/google_no_mb_account"));
             } else {
@@ -105,8 +78,6 @@ export const logout = createThunkAction(LOGOUT, function() {
     return function(dispatch, getState) {
         // TODO: as part of a logout we want to clear out any saved state that we have about anything
 
-        console.log("Attempting Sign out");
-        userManager.signoutRedirect();
         let sessionId = MetabaseCookies.setSessionCookie();
         if (sessionId) {
             // actively delete the session
