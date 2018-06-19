@@ -19,9 +19,10 @@
              [segment :refer [Segment]]
              [table :refer [Table]]]
             [metabase.query-processor.middleware.expand :as ql]
-            [metabase.test.data :as data]
+            [metabase.test
+             [data :as data]
+             [util :as tu]]
             [metabase.test.data.users :as test-users]
-            [metabase.test.util :as tu]
             [metabase.util :as u]
             [toucan.db :as db]
             [toucan.util.test :as tt])
@@ -487,7 +488,7 @@
   (let [results ((test-users/user->client username) :post "dataset"
                  {:database (u/get-id db)
                   :type     :native
-                  :native   {:query "SELECT COUNT(*) FROM VENUES;"}})]
+                  :native   {:query "SELECT COUNT(*) FROM VENUES"}})]
     (if (string? results)
       results
       (or (:error results)
