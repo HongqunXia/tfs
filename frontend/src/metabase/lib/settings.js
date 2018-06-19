@@ -6,7 +6,7 @@ const mb_settings = _.clone(window.MetabaseBootstrap);
 
 const settingListeners = {};
 
-// provides access to Softheon application settings
+// provides access to Metabase application settings
 const MetabaseSettings = {
 
     get: function(propName, defaultValue = null) {

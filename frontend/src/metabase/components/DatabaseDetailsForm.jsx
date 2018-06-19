@@ -15,16 +15,10 @@ function isEmpty(str) {
 }
 
 const AUTH_URL_PREFIXES = {
-    bigquery: '',
-    bigquery_with_drive: '',
-    googleanalytics: '',
+    bigquery: 'https://accounts.google.com/o/oauth2/auth?redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/bigquery&client_id=',
+    bigquery_with_drive: 'https://accounts.google.com/o/oauth2/auth?redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/bigquery%20https://www.googleapis.com/auth/drive&client_id=',
+    googleanalytics: 'https://accounts.google.com/o/oauth2/auth?access_type=offline&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/analytics.readonly&client_id=',
 };
-
-// const AUTH_URL_PREFIXES = {
-//     bigquery: 'https://accounts.google.com/o/oauth2/auth?redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/bigquery&client_id=',
-//     bigquery_with_drive: 'https://accounts.google.com/o/oauth2/auth?redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/bigquery%20https://www.googleapis.com/auth/drive&client_id=',
-//     googleanalytics: 'https://accounts.google.com/o/oauth2/auth?access_type=offline&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=https://www.googleapis.com/auth/analytics.readonly&client_id=',
-// };
 
 const ENABLE_API_PREFIXES = {
     googleanalytics: 'https://console.developers.google.com/apis/api/analytics.googleapis.com/overview?project='
@@ -207,9 +201,9 @@ export default class DatabaseDetailsForm extends Component {
                             <Toggle value={on} onChange={(val) => this.onChange("let-user-control-scheduling", val)}/>
                         </div>
                         <div className="px2">
-                            <h3>{t`This is a large database, so let me choose when Softheon syncs and scans`}</h3>
+                            <h3>{t`This is a large database, so let me choose when Metabase syncs and scans`}</h3>
                             <div style={{maxWidth: "40rem"}} className="pt1">
-                                {t`By default, Softheon does a lightweight hourly sync, and an intensive daily scan of field values.
+                                {t`By default, Metabase does a lightweight hourly sync, and an intensive daily scan of field values.
                                 If you have a large database, we recommend turning this on and reviewing when and how often the field value scans happen.`}
                             </div>
                         </div>
@@ -267,7 +261,7 @@ export default class DatabaseDetailsForm extends Component {
                 enableAPILink = (
                     <div className="flex align-center Form-offset">
                         <div className="Grid-cell--top">
-                            {t`To use Softheon with this data you must enable API access in the Google Developers Console.`}
+                            {t`To use Metabase with this data you must enable API access in the Google Developers Console.`}
                         </div>
                         <div className="Grid-cell--top ml1">
                             {jt`${<a href={enableAPIURL} target='_blank'>Click here</a>} to go to the console if you haven't already done so.`}

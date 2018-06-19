@@ -73,15 +73,15 @@ export default class SettingsUpdatesForm extends Component {
         if (!versionInfo || MetabaseUtils.compareVersions(currentVersion, versionInfo.latest.version) >= 0) {
             return (
                 <div className="p2 bg-brand bordered rounded border-brand text-white text-bold">
-                    {t`You're running Softheon {this.removeVersionPrefixIfNeeded(currentVersion)} which is the latest and greatest!`}
+                    {t`You're running Metabase {this.removeVersionPrefixIfNeeded(currentVersion)} which is the latest and greatest!`}
                 </div>
             );
         } else {
             return (
                 <div>
                     <div className="p2 bg-green bordered rounded border-green flex flex-row align-center justify-between">
-                        <span className="text-white text-bold">{t`Softheon ${this.removeVersionPrefixIfNeeded(versionInfo.latest.version)} is available.  You're running {this.removeVersionPrefixIfNeeded(currentVersion)}`}</span>
-                        <a data-metabase-event={"Updates Settings; Update link clicked; "+versionInfo.latest.version} className="Button Button--white Button--medium borderless" href="" target="_blank">{t`Update`}</a>
+                        <span className="text-white text-bold">{t`Metabase ${this.removeVersionPrefixIfNeeded(versionInfo.latest.version)} is available.  You're running {this.removeVersionPrefixIfNeeded(currentVersion)}`}</span>
+                        <a data-metabase-event={"Updates Settings; Update link clicked; "+versionInfo.latest.version} className="Button Button--white Button--medium borderless" href="http://www.metabase.com/start" target="_blank">{t`Update`}</a>
                     </div>
 
                     <div className="text-grey-3">

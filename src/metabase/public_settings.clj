@@ -15,17 +15,17 @@
            java.util.TimeZone))
 
 (defsetting check-for-updates
-  (tru "Identify when new versions of Softheon are available.")
+  (tru "Identify when new versions of Metabase are available.")
   :type    :boolean
   :default true)
 
 (defsetting version-info
-  (tru "Information about available versions of Softheon.")
+  (tru "Information about available versions of Metabase.")
   :type    :json
   :default {})
 
 (defsetting site-name
-  (tru "The name used for this instance of Softheon.")
+  (tru "The name used for this instance of Metabase.")
   :default "Metabase")
 
 ;; This value is *guaranteed* to never have a trailing slash :D
@@ -149,8 +149,6 @@
    :engines               ((resolve 'metabase.driver/available-drivers))
    :ga_code               "UA-60817802-1"
    :google_auth_client_id (setting/get :google-auth-client-id)
-   :identity_server_uri   (setting/get :identity-server-uri)
-   :api_secret            (setting/get :api-secret)
    :has_sample_dataset    (db/exists? 'Database, :is_sample true)
    :hide_embed_branding   (metastore/hide-embed-branding?)
    :ldap_configured       ((resolve 'metabase.integrations.ldap/ldap-configured?))

@@ -109,7 +109,7 @@ const TagEditorHelp = ({ setDatasetQuery, sampleDatasetId }) => {
             <TagExample datasetQuery={EXAMPLES.multipleOptional} setDatasetQuery={setQueryWithSampleDatasetId} />
 
             <p className="pt2 link">
-                <a href="" target="_blank" data-metabase-event="QueryBuilder;Template Tag Documentation Click">{t`Read the full documentation`}</a>
+                <a href="http://www.metabase.com/docs/latest/users-guide/start" target="_blank" data-metabase-event="QueryBuilder;Template Tag Documentation Click">{t`Read the full documentation`}</a>
             </p>
         </div>
     )

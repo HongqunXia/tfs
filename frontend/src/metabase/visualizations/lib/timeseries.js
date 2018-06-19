@@ -63,7 +63,7 @@ const TIMESERIES_INTERVALS = [
     { interval: "year",   count: 100, rangeFn: d3.time.years,   testFn: (d) => parseTimestamp(d).year() % 100   }  // (21) 100 year
 ];
 
-// mapping from Softheon "unit" to d3 intervals above
+// mapping from Metabase "unit" to d3 intervals above
 const INTERVAL_INDEX_BY_UNIT = {
     "minute": 1,
     "hour": 9,

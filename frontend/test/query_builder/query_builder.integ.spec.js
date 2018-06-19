@@ -129,7 +129,7 @@ describe("QueryBuilder", () => {
         })
     })
 
-    describe("for saved queries", async () => {
+    describe("for saved questions", async () => {
         let savedQuestion = null;
         beforeAll(async () => {
             savedQuestion = await createSavedQuestion(unsavedOrderCountQuestion)

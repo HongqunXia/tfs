@@ -25,7 +25,7 @@ export type QueryParams = {
     [key: string]: string
 };
 
-/* Softheon API error object returned by the backend */
+/* Metabase API error object returned by the backend */
 export type ApiError = {
     status: number, // HTTP status
     // TODO: incomplete

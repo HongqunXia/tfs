@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
 import { Link } from "react-router";
 import { connect } from "react-redux";
-import { CallbackComponent } from "redux-oidc"
 
 import cx from "classnames";
 import { t } from 'c-3po';
@@ -14,7 +13,6 @@ import FormMessage from "metabase/components/form/FormMessage.jsx";
 import LogoIcon from "metabase/components/LogoIcon.jsx";
 import Settings from "metabase/lib/settings";
 import Utils from "metabase/lib/utils";
-import userManager from "../userManager";
 
 import * as authActions from "../auth";
 
@@ -37,8 +35,7 @@ export default class LoginApp extends Component {
         super(props, context);
         this.state = {
             credentials: {},
-            valid: false,
-            showPassword: false
+            valid: false
         }
     }
 
@@ -59,6 +56,33 @@ export default class LoginApp extends Component {
     componentDidMount() {
 
         this.validateForm();
+
+        const { loginGoogle, location } = this.props;
+
+        let ssoLoginButton = findDOMNode(this.refs.ssoLoginButton);
+
+        function attachGoogleAuth() {
+            // if gapi isn't loaded yet then wait 100ms and check again. Keep doing this until we're ready
+            if (!window.gapi) {
+                window.setTimeout(attachGoogleAuth, 100);
+                return;
+            }
+            try {
+                window.gapi.load('auth2', () => {
+                  let auth2 = window.gapi.auth2.init({
+                      client_id: Settings.get('google_auth_client_id'),
+                      cookiepolicy: 'single_host_origin',
+                  });
+                  auth2.attachClickHandler(ssoLoginButton, {},
+                      (googleUser) => loginGoogle(googleUser, location.query.redirect),
+                      (error) => console.error('There was an error logging in', error)
+                  );
+                })
+            } catch (error) {
+                console.error('Error attaching Google Auth handler: ', error);
+            }
+        }
+        attachGoogleAuth();
     }
 
     componentDidUpdate() {
@@ -67,28 +91,6 @@ export default class LoginApp extends Component {
 
     onChangeUserName(fieldName, fieldValue) {
         this.onChange(fieldName, fieldValue.trim())
-    }
-
-    onBlurUserName(value) {
-        if(!Settings.ssoEnabled()) {
-            this.setShowPassword(true);
-            return;
-        } 
-
-        if(value) {
-            if(value.endsWith("@softheon.com")) {
-                userManager.signinRedirect();                
-            }
-            else {
-                this.setShowPassword(true);
-            }
-        }
-    }
-
-    setShowPassword(value) {
-        this.setState({
-            showPassword: value
-        });
     }
 
     onChange(fieldName, fieldValue) {
@@ -109,31 +111,38 @@ export default class LoginApp extends Component {
         const { loginError } = this.props;
 
         return (
-            
             <div className="full-height full bg-white flex flex-column flex-full md-layout-centered">
                 <div className="Login-wrapper wrapper Grid Grid--full md-Grid--1of2 relative z2">
                     <div className="Grid-cell flex layout-centered text-brand">
-                        <img src="https://www.softheon.com/HTMLCache/media/Softheon_Logo_Color.png"/>                        
+                        <LogoIcon className="Logo my4 sm-my0" width={66} height={85} />
                     </div>
                     <div className="Login-content Grid-cell">
                         <form className="Form-new bg-white bordered rounded shadowed" name="form" onSubmit={(e) => this.formSubmitted(e)} noValidate>
-                            <h3 className="Login-header Form-offset">{t`Sign in to Softheon`}</h3>
+                            <h3 className="Login-header Form-offset">{t`Sign in to Metabase`}</h3>
+
+                            { Settings.ssoEnabled() &&
+                                <div className="mx4 mb4 py3 border-bottom relative">
+                                    <SSOLoginButton provider='google' ref="ssoLoginButton"/>
+                                    {/*<div className="g-signin2 ml1 relative z2" id="g-signin2"></div>*/}
+                                    <div className="mx1 absolute text-centered left right" style={{ bottom: -8 }}>
+                                        <span className="text-bold px3 py2 text-grey-3 bg-white">{t`OR`}</span>
+                                    </div>
+                                </div>
+                            }
 
                             <FormMessage formError={loginError && loginError.data.message ? loginError : null} ></FormMessage>
 
-                            <FormField ref="userNameFormField" key="username" fieldName="username" formError={loginError}>
+                            <FormField key="username" fieldName="username" formError={loginError}>
                                 <FormLabel title={Settings.ldapEnabled() ? t`Username or email address` : t`Email address`} fieldName={"username"} formError={loginError} />
-                                <input className="Form-input Form-offset full py1" name="username" placeholder="youlooknicetoday@email.com" type="text" onBlur={(e) => this.onBlurUserName(e.target.value)} onChange={(e) => this.onChange("username", e.target.value)} autoFocus />
+                                <input className="Form-input Form-offset full py1" name="username" placeholder="youlooknicetoday@email.com" type="text" onChange={(e) => this.onChange("username", e.target.value)} autoFocus />
                                 <span className="Form-charm"></span>
                             </FormField>
 
-                            { this.state.showPassword && 
                             <FormField key="password" fieldName="password" formError={loginError}>
                                 <FormLabel title={t`Password`}  fieldName={"password"} formError={loginError} />
                                 <input className="Form-input Form-offset full py1" name="password" placeholder="Shh..." type="password" onChange={(e) => this.onChange("password", e.target.value)} />
                                 <span className="Form-charm"></span>
                             </FormField>
-                            }
 
                             <div className="Form-field">
                                 <ul className="Form-offset">

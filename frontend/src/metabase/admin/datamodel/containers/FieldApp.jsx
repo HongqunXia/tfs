@@ -171,7 +171,7 @@ export default class FieldApp extends Component {
 
                             <Section>
                                 <SectionHeader title={t`Visibility`}
-                                               description={t`Where this field will appear throughout Softheon`}/>
+                                               description={t`Where this field will appear throughout Metabase`}/>
                                 <FieldVisibilityPicker
                                     triggerClasses={SelectClasses}
                                     field={field.getPlainObject()}
@@ -646,7 +646,7 @@ export class UpdateCachedFieldValues extends Component {
             <div>
                 <SectionHeader
                     title={t`Cached field values`}
-                    description={t`Softheon can scan the values for this field to enable checkbox filters in dashboards and questions.`}
+                    description={t`Metabase can scan the values for this field to enable checkbox filters in dashboards and questions.`}
                 />
                 <ActionButton
                     className="Button mr2"

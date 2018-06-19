@@ -289,7 +289,7 @@ export default class QueryHeader extends Component {
                 } else {
                     // edit button
                     buttonSections.push([
-                        <Tooltip key="edit" tooltip={t`Edit query`}>
+                        <Tooltip key="edit" tooltip={t`Edit question`}>
                             <a className="cursor-pointer text-brand-hover" onClick={this.onBeginEditing}>
                                 <Icon name="pencil" size={16} />
                             </a>
@@ -515,7 +515,7 @@ export default class QueryHeader extends Component {
             <div className="relative">
                 <HeaderBar
                     isEditing={this.props.isEditing}
-                    name={this.props.isNew ? t`New query` : this.props.card.name}
+                    name={this.props.isNew ? t`New question` : this.props.card.name}
                     description={this.props.card ? this.props.card.description : null}
                     breadcrumb={(!this.props.card.id && this.props.originalCard) ? (<span className="pl2">{t`started from`} <a className="link" onClick={this.onFollowBreadcrumb}>{this.props.originalCard.name}</a></span>) : null }
                     buttons={this.getHeaderButtons()}

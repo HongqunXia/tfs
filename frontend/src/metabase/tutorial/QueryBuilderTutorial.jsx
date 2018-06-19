@@ -172,7 +172,7 @@ const QUERY_BUILDER_STEPS = [
                     src="app/assets/img/qb_tutorial/boat.png" width={190}
                 />
                 <h3>{t`Well done!`}</h3>
-                <p>{t`That's all! If you still have questions, check out our`} <a className="link" target="_blank" href="">{t`User's Guide`}</a>. {t`Have fun exploring your data!`}</p>
+                <p>{t`That's all! If you still have questions, check out our`} <a className="link" target="_blank" href="http://www.metabase.com/docs/latest/users-guide/start">{t`User's Guide`}</a>. {t`Have fun exploring your data!`}</p>
                 <a className="Button Button--primary" onClick={props.onNext}>{t`Thanks`}!</a>
             </div>
     },
@@ -181,7 +181,7 @@ const QUERY_BUILDER_STEPS = [
         getModal: (props) =>
             <div className="text-centered">
                 <h3>{t`Save Your Questions`}!</h3>
-                <p>{t`By the way, you can save your questions so you can refer to them later. Saved Queries can also be put into dashboards or Pulses.`}</p>
+                <p>{t`By the way, you can save your questions so you can refer to them later. Saved Questions can also be put into dashboards or Pulses.`}</p>
                 <a className="Button Button--primary" onClick={props.onClose}>{t`Sounds good`}</a>
             </div>
     }

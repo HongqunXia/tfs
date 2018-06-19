@@ -39,19 +39,19 @@
 
 (def ^:private ^:const abandonment-context
   {:heading      "We’d love your feedback."
-   :callToAction "It looks like Softheon Foundry wasn’t quite a match for you. Would you mind taking a fast 5 question survey to help the Metabase team understand why and make things better in the future?"
-   :link         ""})
+   :callToAction "It looks like Metabase wasn’t quite a match for you. Would you mind taking a fast 5 question survey to help the Metabase team understand why and make things better in the future?"
+   :link         "http://www.metabase.com/feedback/inactive"})
 
 (def ^:private ^:const follow-up-context
   {:heading      "We hope you've been enjoying Metabase."
    :callToAction "Would you mind taking a fast 6 question survey to tell us how it’s going?"
-   :link         ""})
+   :link         "http://www.metabase.com/feedback/active"})
 
 
 ;;; ### Public Interface
 
 (defn send-new-user-email!
-  "Send an email to INVITIED letting them know INVITOR has invited them to join Softheon Foundry."
+  "Send an email to INVITIED letting them know INVITOR has invited them to join Metabase."
   [invited invitor join-url]
   (let [company      (or (public-settings/site-name) "Unknown")
         message-body (stencil/render-file "metabase/email/new_user_invite"
@@ -65,7 +65,7 @@
                                :logoHeader   true}
                               (random-quote-context)))]
     (email/send-message!
-      :subject      (str "You're invited to join Softheon Foundry")
+      :subject      (str "You're invited to join " company "'s Metabase")
       :recipients   [(:email invited)]
       :message-type :html
       :message      message-body)))
@@ -86,8 +86,8 @@
   (let [recipients (all-admin-recipients)]
     (email/send-message!
       :subject      (format (if google-auth?
-                              "%s created a Softheon Foundry account"
-                              "%s accepted their Softheon Foundry invite")
+                              "%s created a Metabase account"
+                              "%s accepted their Metabase invite")
                             (:common_name new-user))
       :recipients   recipients
       :message-type :html
@@ -116,7 +116,7 @@
                         :passwordResetUrl password-reset-url
                         :logoHeader       true})]
     (email/send-message!
-      :subject      "[Softheon] Password Reset Request"
+      :subject      "[Metabase] Password Reset Request"
       :recipients   [email]
       :message-type :html
       :message      message-body)))
@@ -154,7 +154,7 @@
                             (random-quote-context))
         message-body (stencil/render-file "metabase/email/notification" context)]
     (email/send-message!
-      :subject      "[Softheon] Notification"
+      :subject      "[Metabase] Notification"
       :recipients   [email]
       :message-type :html
       :message      message-body)))
@@ -164,8 +164,8 @@
   [email msg-type]
   {:pre [(u/is-email? email) (contains? #{"abandon" "follow-up"} msg-type)]}
   (let [subject      (if (= "abandon" msg-type)
-                       "[Softheon] Help make Softheon Foundry better."
-                       "[Softheon] Tell us how things are going.")
+                       "[Metabase] Help make Metabase better."
+                       "[Metabase] Tell us how things are going.")
         context      (merge notification-context
                             (random-quote-context)
                             (if (= "abandon" msg-type)
