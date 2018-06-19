@@ -1,7 +1,7 @@
 /* @flow weak */
 
 import React, { Component } from "react";
-import { t } from "c-3po";
+
 import DatePicker
     from "metabase/query_builder/components/filters/pickers/DatePicker";
 import PopoverWithTrigger from "metabase/components/PopoverWithTrigger";
@@ -103,16 +103,16 @@ export default class TimeseriesFilterWidget extends Component {
                 currentFilter
             ).join(" - ");
             if (currentFilter[0] === ">") {
-                currentDescription = t`After ${currentDescription}`;
+                currentDescription = "After " + currentDescription;
             } else if (currentFilter[0] === "<") {
-                currentDescription = t`Before ${currentDescription}`;
+                currentDescription = "Before " + currentDescription;
             } else if (currentFilter[0] === "IS_NULL") {
-                currentDescription = t`Is Empty`;
+                currentDescription = "Is Empty";
             } else if (currentFilter[0] === "NOT_NULL") {
-                currentDescription = t`Not Empty`;
+                currentDescription = "Not Empty";
             }
         } else {
-            currentDescription = t`All Time`;
+            currentDescription = "All Time";
         }
 
         return (

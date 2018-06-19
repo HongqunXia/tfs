@@ -67,7 +67,7 @@
 (defonce ^:private registered-settings
   (atom {}))
 
-(s/defn ^:private resolve-setting :- SettingDefinition
+(s/defn ^:private ^:always-validate resolve-setting :- SettingDefinition
   [setting-or-name]
   (if (map? setting-or-name)
     setting-or-name
@@ -209,7 +209,7 @@
                    "\nAssuming Setting already exists in DB and updating existing value.")
          (update-setting! setting-name new-value))))
 
-(s/defn set-string!
+(s/defn ^:always-validate set-string!
   "Set string value of SETTING-OR-NAME. A `nil` or empty NEW-VALUE can be passed to unset (i.e., delete)
    SETTING-OR-NAME."
   [setting-or-name, new-value :- (s/maybe s/Str)]

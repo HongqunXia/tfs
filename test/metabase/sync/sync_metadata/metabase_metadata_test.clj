@@ -37,10 +37,9 @@
                   :name   "movies"
                   :active true)]
       (db/insert! Field
-        :database_type "BOOL"
-        :base_type     :type/Boolean
-        :table_id      (u/get-id table)
-        :name          "filming")
+        :base_type :type/Boolean
+        :table_id (u/get-id table)
+        :name     "filming")
       ;; here we go
       [(get-table-and-fields-descriptions table)
        (do

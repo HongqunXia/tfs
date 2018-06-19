@@ -1,5 +1,5 @@
 import { getVisualizationRaw } from "metabase/visualizations";
-import { t } from 'c-3po';
+
 import {
     columnsAreValid,
     getChartTypeFromData,
@@ -145,14 +145,14 @@ export function fieldSetting(id, filter, getDefault) {
 
 const COMMON_SETTINGS = {
     "card.title": {
-        title: t`Title`,
+        title: "Title",
         widget: "input",
         getDefault: (series) => series.length === 1 ? series[0].card.name : null,
         dashboard: true,
         useRawSeries: true
     },
     "card.description": {
-        title: t`Description`,
+        title: "Description",
         widget: "input",
         getDefault: (series) => series.length === 1 ? series[0].card.description : null,
         dashboard: true,

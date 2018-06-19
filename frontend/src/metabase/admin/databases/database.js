@@ -3,7 +3,7 @@ import _ from "underscore";
 import { createAction } from "redux-actions";
 import { handleActions, combineReducers, createThunkAction } from "metabase/lib/redux";
 import { push } from "react-router-redux";
-import { t } from 'c-3po';
+
 import MetabaseAnalytics from "metabase/lib/analytics";
 import MetabaseSettings from "metabase/lib/settings";
 
@@ -67,7 +67,7 @@ export const fetchDatabases = createThunkAction(FETCH_DATABASES, function() {
     };
 });
 
-// Migrates old "Enable in-depth database analysis" option to new "Let me choose when Softheon syncs and scans" option
+// Migrates old "Enable in-depth database analysis" option to new "Let me choose when Metabase syncs and scans" option
 // Migration is run as a separate action because that makes it easy to track in tests
 const migrateDatabaseToNewSchedulingSettings = (database) => {
     return async function(dispatch, getState) {
@@ -152,7 +152,7 @@ export const proceedWithDbCreation = function (database) {
                         step: DB_EDIT_FORM_SCHEDULING_TAB
                     });
                 } else {
-                    dispatch.action(VALIDATE_DATABASE_FAILED, { error: { data: { message: t`Couldn't connect to the database. Please check the connection details.` } } });
+                    dispatch.action(VALIDATE_DATABASE_FAILED, { error: { data: { message: "Couldn't connect to the database. Please check the connection details." } } });
                 }
             } catch(error) {
                 dispatch.action(VALIDATE_DATABASE_FAILED, { error });
@@ -204,7 +204,7 @@ export const updateDatabase = function(database) {
 // NOTE Atte Keinänen 7/26/17: Original monolithic saveDatabase was broken out to smaller actions
 // but `saveDatabase` action creator is still left here for keeping the interface for React components unchanged
 export const saveDatabase = function(database, details) {
-    // If we don't let user control the scheduling settings, let's override them with Softheon defaults
+    // If we don't let user control the scheduling settings, let's override them with Metabase defaults
     // TODO Atte Keinänen 8/15/17: Implement engine-specific scheduling defaults
     const letUserControlScheduling = details["let-user-control-scheduling"];
     const overridesIfNoUserControl = letUserControlScheduling ? {} : {
@@ -321,11 +321,11 @@ const formState = handleActions({
     [RESET]: { next: () => DEFAULT_FORM_STATE },
     [CREATE_DATABASE_STARTED]: () => ({ isSubmitting: true }),
     // not necessarily needed as the page is immediately redirected after db creation
-    [CREATE_DATABASE]: () => ({ formSuccess: { data: { message: t`Successfully created!` } } }),
+    [CREATE_DATABASE]: () => ({ formSuccess: { data: { message: "Successfully created!" } } }),
     [VALIDATE_DATABASE_FAILED]: (state, { payload: { error } }) => ({ formError: error }),
     [CREATE_DATABASE_FAILED]: (state, { payload: { error } }) => ({ formError: error }),
     [UPDATE_DATABASE_STARTED]: () => ({ isSubmitting: true }),
-    [UPDATE_DATABASE]: () => ({ formSuccess: { data: { message: t`Successfully saved!` } } }),
+    [UPDATE_DATABASE]: () => ({ formSuccess: { data: { message: "Successfully saved!" } } }),
     [UPDATE_DATABASE_FAILED]: (state, { payload: { error } }) => ({ formError: error }),
     [CLEAR_FORM_STATE]: () => DEFAULT_FORM_STATE
 }, DEFAULT_FORM_STATE);

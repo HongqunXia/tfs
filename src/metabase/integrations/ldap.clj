@@ -8,7 +8,6 @@
              [setting :as setting :refer [defsetting]]
              [user :as user :refer [User]]]
             [metabase.util :as u]
-            [puppetlabs.i18n.core :refer [tru]]
             [toucan.db :as db])
   (:import [com.unboundid.ldap.sdk LDAPConnectionPool LDAPException]))
 
@@ -16,19 +15,19 @@
   "{login}")
 
 (defsetting ldap-enabled
-  (tru "Enable LDAP authentication.")
+  "Enable LDAP authentication."
   :type    :boolean
   :default false)
 
 (defsetting ldap-host
-  (tru "Server hostname."))
+  "Server hostname.")
 
 (defsetting ldap-port
-  (tru "Server port, usually 389 or 636 if SSL is used.")
+  "Server port, usually 389 or 636 if SSL is used."
   :default "389")
 
 (defsetting ldap-security
-  (tru "Use SSL, TLS or plain text.")
+  "Use SSL, TLS or plain text."
   :default "none"
   :setter  (fn [new-value]
              (when-not (nil? new-value)
@@ -36,41 +35,41 @@
              (setting/set-string! :ldap-security new-value)))
 
 (defsetting ldap-bind-dn
-  (tru "The Distinguished Name to bind as (if any), this user will be used to lookup information about other users."))
+  "The Distinguished Name to bind as (if any), this user will be used to lookup information about other users.")
 
 (defsetting ldap-password
-  (tru "The password to bind with for the lookup user."))
+  "The password to bind with for the lookup user.")
 
 (defsetting ldap-user-base
-  (tru "Search base for users. (Will be searched recursively)"))
+  "Search base for users. (Will be searched recursively)")
 
 (defsetting ldap-user-filter
-  (tru "User lookup filter, the placeholder '{login}' will be replaced by the user supplied login.")
+  "User lookup filter, the placeholder {login} will be replaced by the user supplied login."
   :default "(&(objectClass=inetOrgPerson)(|(uid={login})(mail={login})))")
 
 (defsetting ldap-attribute-email
-  (tru "Attribute to use for the user's email. (usually 'mail', 'email' or 'userPrincipalName')")
+  "Attribute to use for the user's email. (usually 'mail', 'email' or 'userPrincipalName')"
   :default "mail")
 
 (defsetting ldap-attribute-firstname
-  (tru "Attribute to use for the user's first name. (usually 'givenName')")
+  "Attribute to use for the user's first name. (usually 'givenName')"
   :default "givenName")
 
 (defsetting ldap-attribute-lastname
-  (tru "Attribute to use for the user's last name. (usually 'sn')")
+  "Attribute to use for the user's last name. (usually 'sn')"
   :default "sn")
 
 (defsetting ldap-group-sync
-  (tru "Enable group membership synchronization with LDAP.")
+  "Enable group membership synchronization with LDAP."
   :type    :boolean
   :default false)
 
 (defsetting ldap-group-base
-  (tru "Search base for groups, not required if your LDAP directory provides a 'memberOf' overlay. (Will be searched recursively)"))
+  "Search base for groups, not required if your LDAP directory provides a 'memberOf' overlay. (Will be searched recursively)")
 
 (defsetting ldap-group-mappings
   ;; Should be in the form: {"cn=Some Group,dc=...": [1, 2, 3]} where keys are LDAP groups and values are lists of MB groups IDs
-  (tru "JSON containing LDAP to Metabase group mappings.")
+  "JSON containing LDAP to Metabase group mappings."
   :type    :json
   :default {})
 

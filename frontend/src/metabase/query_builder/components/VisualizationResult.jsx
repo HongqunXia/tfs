@@ -47,16 +47,14 @@ export default class VisualizationResult extends Component {
                 <VisualizationErrorMessage
                     type='noRows'
                     title='No results!'
-                    message={t`This may be the answer you’re looking for. If not, try removing or changing your filters to make them less specific.`}
+                    message='This may be the answer you’re looking for. If not, try removing or changing your filters to make them less specific.'
                     action={
                         <div>
-                            { supportsRowsPresentAlert && !isDirty && (
-                                <p>
-                                    {jt`You can also ${<a className="link" onClick={this.showCreateAlertModal}>get an alert</a>} when there are any results.`}
-                                </p>
-                                )}
+                            { supportsRowsPresentAlert && !isDirty && <p>
+                                You can also <a className="link" onClick={this.showCreateAlertModal}>get an alert</a> when there are any results.
+                            </p> }
                             <button className="Button" onClick={() => window.history.back() }>
-                                {t`Back to last run`}
+                                Back to last run
                             </button>
                         </div>
                     }
@@ -78,16 +76,14 @@ export default class VisualizationResult extends Component {
                 data: results[index] && results[index].data
             }));
 
-            return (
-                <Visualization
-                    series={series}
-                    onChangeCardAndRun={navigateToNewCardInsideQB}
-                    isEditing={true}
-                    card={question.card()}
-                    // Table:
-                    {...props}
-                />
-            )
+            return <Visualization
+                series={series}
+                onChangeCardAndRun={navigateToNewCardInsideQB}
+                isEditing={true}
+                card={question.card()}
+                // Table:
+                {...props}
+            />
         }
     }
 }

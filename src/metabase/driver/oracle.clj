@@ -14,10 +14,6 @@
              [honeysql-extensions :as hx]
              [ssh :as ssh]]))
 
-(defrecord OracleDriver []
-  clojure.lang.Named
-  (getName [_] "Oracle"))
-
 (def ^:private ^:const pattern->type
   [;; Any types -- see http://docs.oracle.com/cd/B28359_01/server.111/b28286/sql_elements001.htm#i107578
    [#"ANYDATA"     :type/*]  ; Instance of a given type with data plus a description of the type (?)
@@ -131,8 +127,7 @@
 
 
 (defn- increment-identifier-suffix
-  "Add an appropriate suffix to a keyword IDENTIFIER to make it distinct from previous usages of the same identifier,
-  e.g.
+  "Add an appropriate suffix to a keyword IDENTIFIER to make it distinct from previous usages of the same identifier, e.g.
 
      (increment-identifier-suffix :my_col)   ; -> :my_col_2
      (increment-identifier-suffix :my_col_2) ; -> :my_col_3"
@@ -176,8 +171,8 @@
         ;; otherwise if we haven't seen it record it as seen and move on to the next column
         :else                          (recur (conj already-seen alias) (conj acc [col alias]) more)))))
 
-;; Oracle doesn't support `LIMIT n` syntax. Instead we have to use `WHERE ROWNUM <= n` (`NEXT n ROWS ONLY` isn't
-;; supported on Oracle versions older than 12). This has to wrap the actual query, e.g.
+;; Oracle doesn't support `LIMIT n` syntax. Instead we have to use `WHERE ROWNUM <= n` (`NEXT n ROWS ONLY` isn't supported on Oracle versions older than 12).
+;; This has to wrap the actual query, e.g.
 ;;
 ;; SELECT *
 ;; FROM (
@@ -187,8 +182,8 @@
 ;; )
 ;; WHERE ROWNUM < 10;
 ;;
-;; This wrapping can cause problems if there is an ambiguous column reference in the nested query (i.e. two columns
-;; with the same alias name). To ensure that doesn't happen, those column references need to be disambiguated first
+;; This wrapping can cause problems if there is an ambiguous column reference in the nested query (i.e. two columns with the same alias name).
+;; To ensure that doesn't happen, those column references need to be disambiguated first
 ;;
 ;; To do an offset we have to do something like:
 ;;
@@ -230,9 +225,11 @@
 
 
 ;; Oracle doesn't support `TRUE`/`FALSE`; use `1`/`0`, respectively; convert these booleans to numbers.
-(defmethod sqlqp/->honeysql [OracleDriver Boolean]
-  [_ bool]
-  (if bool 1 0))
+(defn- prepare-value [{value :value}]
+  (cond
+    (true? value)  1
+    (false? value) 0
+    :else          value))
 
 (defn- string-length-fn [field-key]
   (hsql/call :length field-key))
@@ -255,8 +252,12 @@
     "You must specify the SID and/or the Service Name."
     message))
 
-(def ^:private oracle-date-formatters (driver/create-db-time-formatters "yyyy-MM-dd HH:mm:ss.SSS zzz"))
+(def ^:private oracle-date-formatter (driver/create-db-time-formatter "yyyy-MM-dd HH:mm:ss.SSS zzz"))
 (def ^:private oracle-db-time-query "select to_char(current_timestamp, 'YYYY-MM-DD HH24:MI:SS.FF3 TZD') FROM DUAL")
+
+(defrecord OracleDriver []
+  clojure.lang.Named
+  (getName [_] "Oracle"))
 
 (u/strict-extend OracleDriver
   driver/IDriver
@@ -287,7 +288,7 @@
                                                              :placeholder  "*******"}]))
           :execute-query                     (comp remove-rownum-column sqlqp/execute-query)
           :humanize-connection-error-message (u/drop-first-arg humanize-connection-error-message)
-          :current-db-time                   (driver/make-current-db-time-fn oracle-db-time-query oracle-date-formatters)})
+          :current-db-time                   (driver/make-current-db-time-fn oracle-date-formatter oracle-db-time-query)})
 
   sql/ISQLDriver
   (merge (sql/ISQLDriverDefaultsMixin)
@@ -300,9 +301,7 @@
           :excluded-schemas          (fn [& _]
                                        (set/union
                                         #{"ANONYMOUS"
-                                          ;; TODO - are there othere APEX tables we want to skip? Maybe we should make
-                                          ;; this a pattern instead? (#"^APEX_")
-                                          "APEX_040200"
+                                          "APEX_040200" ; TODO - are there othere APEX tables we want to skip? Maybe we should make this a pattern instead? (#"^APEX_")
                                           "APPQOSSYS"
                                           "AUDSYS"
                                           "CTXSYS"
@@ -327,12 +326,12 @@
                                           "XDB"
                                           "XS$NULL"}
                                         (when config/is-test?
-                                          ;; DIRTY HACK (!) This is similar hack we do for Redshift, see the
-                                          ;; explanation there we just want to ignore all the test "session schemas"
-                                          ;; that don't match the current test
+                                          ;; DIRTY HACK (!) This is similar hack we do for Redshift, see the explanation there
+                                          ;; we just want to ignore all the test "session schemas" that don't match the current test
                                           (require 'metabase.test.data.oracle)
                                           ((resolve 'metabase.test.data.oracle/non-session-schemas)))))
           :set-timezone-sql          (constantly "ALTER session SET time_zone = %s")
+          :prepare-value             (u/drop-first-arg prepare-value)
           :string-length-fn          (u/drop-first-arg string-length-fn)
           :unix-timestamp->timestamp (u/drop-first-arg unix-timestamp->timestamp)}))
 
@@ -342,9 +341,8 @@
   ;; only register the Oracle driver if the JDBC driver is available
   (when (u/ignore-exceptions
          (Class/forName "oracle.jdbc.OracleDriver"))
-    ;; By default the Oracle JDBC driver isn't compliant with JDBC standards -- instead of returning types like
-    ;; java.sql.Timestamp it returns wacky types like oracle.sql.TIMESTAMPT. By setting this System property the JDBC
-    ;; driver will return the appropriate types. See this page for more details:
-    ;; http://docs.oracle.com/database/121/JJDBC/datacc.htm#sthref437
+    ;; By default the Oracle JDBC driver isn't compliant with JDBC standards -- instead of returning types like java.sql.Timestamp
+    ;; it returns wacky types like oracle.sql.TIMESTAMPT. By setting this System property the JDBC driver will return the appropriate types.
+    ;; See this page for more details: http://docs.oracle.com/database/121/JJDBC/datacc.htm#sthref437
     (.setProperty (System/getProperties) "oracle.jdbc.J2EE13Compliant" "TRUE")
     (driver/register-driver! :oracle (OracleDriver.))))

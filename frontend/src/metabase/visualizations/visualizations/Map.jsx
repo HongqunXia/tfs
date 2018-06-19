@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { t } from 'c-3po';
+
 import ChoroplethMap from "../components/ChoroplethMap.jsx";
 import PinMap from "../components/PinMap.jsx";
 
@@ -19,7 +19,7 @@ import _ from "underscore";
 const PIN_MAP_TYPES = new Set(["pin"]);
 
 export default class Map extends Component {
-    static uiName = t`Map`;
+    static uiName = "Map";
     static identifier = "map";
     static iconName = "pinmap";
 
@@ -33,12 +33,12 @@ export default class Map extends Component {
 
     static settings = {
         "map.type": {
-            title: t`Map type`,
+            title: "Map type",
             widget: "select",
             props: {
                 options: [
-                    { name: t`Region map`, value: "region" },
-                    { name: t`Pin map`, value: "pin" }
+                    { name: "Region map", value: "region" },
+                    { name: "Pin map", value: "pin" }
                     // NOTE Atte Keinänen 8/2/17: Heat/grid maps disabled in the first merged version of binning
                     // { name: "Heat map", value: "heat" },
                     // { name: "Grid map", value: "grid" }
@@ -73,13 +73,13 @@ export default class Map extends Component {
             readDependencies: ["map.latitude_column", "map.longitude_column", "map.metric_column"]
         },
         "map.pin_type": {
-            title: t`Pin type`,
+            title: "Pin type",
             // Don't expose this in the UI for now
             // widget: "select",
             props: {
                 options: [
-                    { name: t`Tiles`, value: "tiles" },
-                    { name: t`Markers`, value: "markers" },
+                    { name: "Tiles", value: "tiles" },
+                    { name: "Markers", value: "markers" },
                     // NOTE Atte Keinänen 8/2/17: Heat/grid maps disabled in the first merged version of binning
                     // { name: "Heat", value: "heat" },
                     // { name: "Grid", value: "grid" }
@@ -97,19 +97,19 @@ export default class Map extends Component {
             getHidden: (series, vizSettings) => !PIN_MAP_TYPES.has(vizSettings["map.type"])
         },
         "map.latitude_column": {
-            title: t`Latitude field`,
+            title: "Latitude field",
             ...fieldSetting("map.latitude_column", isNumeric,
                 ([{ data: { cols }}]) => (_.find(cols, isLatitude) || {}).name),
             getHidden: (series, vizSettings) => !PIN_MAP_TYPES.has(vizSettings["map.type"])
         },
         "map.longitude_column": {
-            title: t`Longitude field`,
+            title: "Longitude field",
             ...fieldSetting("map.longitude_column", isNumeric,
                 ([{ data: { cols }}]) => (_.find(cols, isLongitude) || {}).name),
             getHidden: (series, vizSettings) => !PIN_MAP_TYPES.has(vizSettings["map.type"])
         },
         "map.metric_column": {
-            title: t`Metric field`,
+            title: "Metric field",
             ...metricSetting("map.metric_column"),
             getHidden: (series, vizSettings) =>
                 !PIN_MAP_TYPES.has(vizSettings["map.type"]) || (
@@ -117,7 +117,7 @@ export default class Map extends Component {
                 ),
         },
         "map.region": {
-            title: t`Region map`,
+            title: "Region map",
             widget: "select",
             getDefault: ([{ card, data: { cols }}]) => {
                 if (card.display === "state" || _.any(cols, isState)) {
@@ -134,12 +134,12 @@ export default class Map extends Component {
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "region"
         },
         "map.metric": {
-            title: t`Metric field`,
+            title: "Metric field",
             ...metricSetting("map.metric"),
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "region"
         },
         "map.dimension": {
-            title: t`Region field`,
+            title: "Region field",
             widget: "select",
             ...dimensionSetting("map.dimension"),
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "region"
@@ -151,25 +151,25 @@ export default class Map extends Component {
         "map.center_longitude": {
         },
         "map.heat.radius": {
-            title: t`Radius`,
+            title: "Radius",
             widget: "number",
             default: 30,
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "heat"
         },
         "map.heat.blur": {
-            title: t`Blur`,
+            title: "Blur",
             widget: "number",
             default: 60,
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "heat"
         },
         "map.heat.min-opacity": {
-            title: t`Min Opacity`,
+            title: "Min Opacity",
             widget: "number",
             default: 0,
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "heat"
         },
         "map.heat.max-zoom": {
-            title: t`Max Zoom`,
+            title: "Max Zoom",
             widget: "number",
             default: 1,
             getHidden: (series, vizSettings) => vizSettings["map.type"] !== "heat"
@@ -179,14 +179,14 @@ export default class Map extends Component {
     static checkRenderable([{ data: { cols, rows} }], settings) {
         if (PIN_MAP_TYPES.has(settings["map.type"])) {
             if (!settings["map.longitude_column"] || !settings["map.latitude_column"]) {
-                throw new ChartSettingsError(t`Please select longitude and latitude columns in the chart settings.`, "Data");
+                throw new ChartSettingsError("Please select longitude and latitude columns in the chart settings.", "Data");
             }
         } else if (settings["map.type"] === "region"){
             if (!settings["map.region"]) {
-                throw new ChartSettingsError(t`Please select a region map.`, "Data");
+                throw new ChartSettingsError("Please select a region map.", "Data");
             }
             if (!settings["map.dimension"] || !settings["map.metric"]) {
-                throw new ChartSettingsError(t`Please select region and metric columns in the chart settings.`, "Data");
+                throw new ChartSettingsError("Please select region and metric columns in the chart settings.", "Data");
             }
         }
     }

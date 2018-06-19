@@ -72,7 +72,7 @@ export const setFavorited = createThunkAction(SET_FAVORITED, (cardId, favorited)
 
 import React from "react";
 import { Link } from "react-router";
-import { t } from 'c-3po';
+
 function createUndo(type, actions, collection) {
     return {
         type: type,
@@ -80,9 +80,9 @@ function createUndo(type, actions, collection) {
         message: (undo) => // eslint-disable-line react/display-name
             <div className="flex flex-column">
                 <div>
-                    { inflect(null, undo.count, t`${undo.count} question was ${type}`, t`${undo.count} questions were ${type}`) }
+                    { undo.count + " " + inflect(null, undo.count, "question was", "questions were") + " " + type }
                     { undo.count === 1 && collection &&
-                        <span> {t`to the`} <Link className="link" to={Urls.collection(collection)}>{collection.name}</Link> {t`collection`}.</span>
+                        <span> to the <Link className="link" to={Urls.collection(collection)}>{collection.name}</Link> collection.</span>
                     }
                 </div>
             </div>,

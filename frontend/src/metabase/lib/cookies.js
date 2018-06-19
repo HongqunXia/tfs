@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 export const METABASE_SESSION_COOKIE = 'metabase.SESSION_ID';
 export const METABASE_SEEN_ALERT_SPLASH_COOKIE = 'metabase.SEEN_ALERT_SPLASH'
 
-// Handles management of Softheon cookie work
+// Handles management of Metabase cookie work
 var MetabaseCookies = {
     // set the session cookie.  if sessionId is null, clears the cookie
     setSessionCookie: function(sessionId) {

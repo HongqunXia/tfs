@@ -1,11 +1,10 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { t } from 'c-3po';
 
 import FieldList from "../FieldList.jsx";
 import OperatorSelector from "./OperatorSelector.jsx";
-import FilterOptions from "./FilterOptions";
+
 import DatePicker from "./pickers/DatePicker.jsx";
 import NumberPicker from "./pickers/NumberPicker.jsx";
 import SelectPicker from "./pickers/SelectPicker.jsx";
@@ -24,7 +23,6 @@ import type { Filter, FieldFilter, ConcreteField } from "metabase/meta/types/Que
 import type { FieldMetadata, Operator } from "metabase/meta/types/Metadata";
 
 type Props = {
-    maxHeight?: number,
     query: StructuredQuery,
     filter?: Filter,
     onCommitFilter: (filter: Filter) => void,
@@ -229,7 +227,7 @@ export default class FilterPopover extends Component {
                     />
                 );
             }
-            return <span>{t`not implemented ${operatorField.type}`} {operator.multi ? t`true` : t`false`}</span>;
+            return <span>not implemented {operatorField.type} {operator.multi ? "true" : "false"}</span>;
         });
     }
 
@@ -243,13 +241,11 @@ export default class FilterPopover extends Component {
         const { query } = this.props;
         const { filter } = this.state;
         const [operator, fieldRef] = filter;
-
         if (operator === "SEGMENT" || fieldRef == undefined) {
             return (
                 <div className="FilterPopover">
                     <FieldList
                         className="text-purple"
-                        maxHeight={this.props.maxHeight}
                         field={fieldRef}
                         fieldOptions={query.filterFieldOptions(filter)}
                         segmentOptions={query.filterSegmentOptions(filter)}
@@ -292,14 +288,13 @@ export default class FilterPopover extends Component {
                             { this.renderPicker(filter, field) }
                         </div>
                     }
-                    <div className="FilterPopover-footer border-top flex align-center p2">
-                        <FilterOptions filter={filter} onFilterChange={this.setFilter} />
+                    <div className="FilterPopover-footer p1">
                         <button
                             data-ui-tag="add-filter"
-                            className={cx("Button Button--purple ml-auto", { "disabled": !this.isValid() })}
+                            className={cx("Button Button--purple full", { "disabled": !this.isValid() })}
                             onClick={() => this.commitFilter(this.state.filter)}
                         >
-                            {!this.props.filter ? t`Add filter` : t`Update filter`}
+                            {!this.props.filter ? "Add filter" : "Update filter"}
                         </button>
                     </div>
                 </div>

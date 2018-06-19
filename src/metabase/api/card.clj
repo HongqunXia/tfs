@@ -137,14 +137,14 @@
   `model-id` as the sole paramenter; functions that don't use the param discard it via `u/drop-first-arg`.
 
      ((filter->option->fn :recent) model-id) -> (cards:recent)"
-  {:all      (u/drop-first-arg cards:all)
-   :mine     (u/drop-first-arg cards:mine)
-   :fav      (u/drop-first-arg cards:fav)
-   :database cards:database
-   :table    cards:table
-   :recent   (u/drop-first-arg cards:recent)
-   :popular  (u/drop-first-arg cards:popular)
-   :archived (u/drop-first-arg cards:archived)})
+  {:all           (u/drop-first-arg cards:all)
+   :mine          (u/drop-first-arg cards:mine)
+   :fav           (u/drop-first-arg cards:fav)
+   :database      cards:database
+   :table         cards:table
+   :recent        (u/drop-first-arg cards:recent)
+   :popular       (u/drop-first-arg cards:popular)
+   :archived      (u/drop-first-arg cards:archived)})
 
 (defn- ^:deprecated card-has-label? [label-slug card]
   (contains? (set (map :slug (:labels card))) label-slug))
@@ -161,7 +161,7 @@
 ;; TODO - do we need to hydrate the cards' collections as well?
 (defn- cards-for-filter-option [filter-option model-id label collection-slug]
   (let [cards (-> ((filter-option->fn (or filter-option :all)) model-id)
-                  (hydrate :creator :collection :in_public_dashboard)
+                  (hydrate :creator :collection)
                   hydrate-labels
                   hydrate-favorites)]
     ;; Since labels and collections are hydrated in Clojure-land we need to wait until this point to apply
@@ -216,10 +216,11 @@
 (api/defendpoint GET "/:id"
   "Get `Card` with ID."
   [id]
-  (u/prog1 (-> (Card id)
-               (hydrate :creator :dashboard_count :labels :can_write :collection :in_public_dashboard)
-               api/read-check)
-    (events/publish-event! :card-read (assoc <> :actor_id api/*current-user-id*))))
+  (-> (api/read-check Card id)
+      (hydrate :creator :dashboard_count :labels :can_write :collection)
+      (assoc :actor_id api/*current-user-id*)
+      (->> (events/publish-event! :card-read))
+      (dissoc :actor_id)))
 
 
 ;;; -------------------------------------------------- Saving Cards --------------------------------------------------
@@ -230,14 +231,14 @@
 ;; we'll also pass a simple checksum and have the frontend pass it back to us.  See the QP `results-metadata`
 ;; middleware namespace for more details
 
-(s/defn ^:private result-metadata-for-query :- results-metadata/ResultsMetadata
+(s/defn ^:private ^:always-validate result-metadata-for-query :- results-metadata/ResultsMetadata
   "Fetch the results metadata for a QUERY by running the query and seeing what the QP gives us in return.
    This is obviously a bit wasteful so hopefully we can avoid having to do this."
   [query]
   (binding [qpi/*disable-qp-logging* true]
     (get-in (qp/process-query query) [:data :results_metadata :columns])))
 
-(s/defn ^:private result-metadata :- (s/maybe results-metadata/ResultsMetadata)
+(s/defn ^:private ^:always-validate result-metadata :- (s/maybe results-metadata/ResultsMetadata)
   "Get the right results metadata for this CARD. We'll check to see whether the METADATA passed in seems valid;
    otherwise we'll run the query ourselves to get the right values."
   [query metadata checksum]
@@ -326,7 +327,7 @@
   "You must be a superuser to change the value of `enable_embedding` or `embedding_params`. Embedding must be
   enabled."
   [card enable-embedding? embedding-params]
-  (when (or (and (some? enable-embedding?)
+  (when (or (and (not (nil? enable-embedding?))
                  (not= enable-embedding? (:enable_embedding card)))
             (and embedding-params
                  (not= embedding-params (:embedding_params card))))
@@ -597,7 +598,7 @@
               :or   {constraints dataset-api/default-query-constraints
                      context     :question}}]
   {:pre [(u/maybe? sequential? parameters)]}
-  (let [card    (api/read-check (hydrate (Card card-id) :in_public_dashboard))
+  (let [card    (api/read-check Card card-id)
         query   (query-for-card card parameters constraints)
         options {:executed-by  api/*current-user-id*
                  :context      context
@@ -630,7 +631,7 @@
 ;;; ----------------------------------------------- Sharing is Caring ------------------------------------------------
 
 (api/defendpoint POST "/:card-id/public_link"
-  "Generate publicly-accessible links for this Card. Returns UUID to be used in public links. (If this Card has
+  "Generate publically-accessible links for this Card. Returns UUID to be used in public links. (If this Card has
   already been shared, it will return the existing public link rather than creating a new one.)  Public sharing must
   be enabled."
   [card-id]
@@ -644,7 +645,7 @@
                  :made_public_by_id api/*current-user-id*)))})
 
 (api/defendpoint DELETE "/:card-id/public_link"
-  "Delete the publicly-accessible link to this Card."
+  "Delete the publically-accessible link to this Card."
   [card-id]
   (api/check-superuser)
   (api/check-public-sharing-enabled)
@@ -655,7 +656,7 @@
   {:status 204, :body nil})
 
 (api/defendpoint GET "/public"
-  "Fetch a list of Cards with public UUIDs. These cards are publicly-accessible *if* public sharing is enabled."
+  "Fetch a list of Cards with public UUIDs. These cards are publically-accessible *if* public sharing is enabled."
   []
   (api/check-superuser)
   (api/check-public-sharing-enabled)

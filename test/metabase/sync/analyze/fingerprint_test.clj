@@ -98,8 +98,10 @@
      ;; no type/Float stuff should be included for 1
      [:and
       [:< :fingerprint_version 1]
-      [:in :base_type #{"type/URL" "type/ImageURL" "type/AvatarURL"}]]]]}
-  (with-redefs [i/fingerprint-version->types-that-should-be-re-fingerprinted {1 #{:type/Float :type/URL}
+      [:in :base_type #{"type/SerializedJSON" "type/Name" "type/Text" "type/UUID" "type/State" "type/City"
+                        "type/Country" "type/URL" "type/Email" "type/ImageURL" "type/AvatarURL"
+                        "type/Description"}]]]]}
+  (with-redefs [i/fingerprint-version->types-that-should-be-re-fingerprinted {1 #{:type/Float :type/Text}
                                                                               2 #{:type/Float}}]
     (#'fingerprint/honeysql-for-fields-that-need-fingerprint-updating)))
 

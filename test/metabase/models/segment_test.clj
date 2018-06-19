@@ -4,7 +4,9 @@
              [database :refer [Database]]
              [segment :as segment :refer :all]
              [table :refer [Table]]]
-            [metabase.test.data :refer :all]
+            [metabase.test
+             [data :refer :all]
+             [util :as tu]]
             [metabase.test.data.users :refer :all]
             [metabase.util :as u]
             [toucan.util.test :as tt]))
@@ -154,7 +156,9 @@
 
 ;; ## Segment Revisions
 
-;; #'segment/serialize-segment
+(tu/resolve-private-vars metabase.models.segment serialize-segment diff-segments)
+
+;; serialize-segment
 (expect
   {:id                      true
    :table_id                true
@@ -170,12 +174,12 @@
                   Table    [{table-id :id} {:db_id database-id}]
                   Segment  [segment        {:table_id   table-id
                                             :definition {:filter ["AND" [">" 4 "2014-10-19"]]}}]]
-    (-> (#'segment/serialize-segment Segment (:id segment) segment)
+    (-> (serialize-segment Segment (:id segment) segment)
         (update :id boolean)
         (update :table_id boolean))))
 
 
-;; #'segment/diff-segments
+;; diff-segments
 (expect
   {:definition  {:before {:filter ["AND" [">" 4 "2014-10-19"]]}
                  :after  {:filter ["AND" ["BETWEEN" 4 "2014-07-01" "2014-10-19"]]}}
@@ -187,42 +191,42 @@
                   Table    [{table-id :id} {:db_id database-id}]
                   Segment  [segment        {:table_id   table-id
                                             :definition {:filter ["AND" [">" 4 "2014-10-19"]]}}]]
-    (#'segment/diff-segments Segment segment (assoc segment
-                                               :name        "Something else"
-                                               :description "BBB"
-                                               :definition  {:filter ["AND" ["BETWEEN" 4 "2014-07-01" "2014-10-19"]]}))))
+    (diff-segments Segment segment (assoc segment
+                                          :name        "Something else"
+                                          :description "BBB"
+                                          :definition  {:filter ["AND" ["BETWEEN" 4 "2014-07-01" "2014-10-19"]]}))))
 
 ;; test case where definition doesn't change
 (expect
   {:name {:before "A"
           :after  "B"}}
-  (#'segment/diff-segments Segment
-                           {:name        "A"
-                            :description "Unchanged"
-                            :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}
-                           {:name        "B"
-                            :description "Unchanged"
-                            :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
+  (diff-segments Segment
+                 {:name        "A"
+                  :description "Unchanged"
+                  :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}
+                 {:name        "B"
+                  :description "Unchanged"
+                  :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
 
 ;; first version  so comparing against nil
 (expect
   {:name        {:after  "A"}
    :description {:after "Unchanged"}
    :definition  {:after {:filter ["AND" [">" 4 "2014-10-19"]]}}}
-  (#'segment/diff-segments Segment
-                           nil
-                           {:name        "A"
-                            :description "Unchanged"
-                            :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
+  (diff-segments Segment
+                 nil
+                 {:name        "A"
+                  :description "Unchanged"
+                  :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
 
 ;; removals only
 (expect
   {:definition  {:before {:filter ["AND" [">" 4 "2014-10-19"] ["=" 5 "yes"]]}
                  :after  {:filter ["AND" [">" 4 "2014-10-19"]]}}}
-  (#'segment/diff-segments Segment
-                           {:name        "A"
-                            :description "Unchanged"
-                            :definition  {:filter ["AND" [">" 4 "2014-10-19"] ["=" 5 "yes"]]}}
-                           {:name        "A"
-                            :description "Unchanged"
-                            :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
+  (diff-segments Segment
+                 {:name        "A"
+                  :description "Unchanged"
+                  :definition  {:filter ["AND" [">" 4 "2014-10-19"] ["=" 5 "yes"]]}}
+                 {:name        "A"
+                  :description "Unchanged"
+                  :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))

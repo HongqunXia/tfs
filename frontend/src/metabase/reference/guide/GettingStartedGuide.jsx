@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router";
 import { connect } from 'react-redux';
-import { t, jt } from 'c-3po';
+
 import cx from "classnames";
 
 import LoadingAndErrorWrapper from "metabase/components/LoadingAndErrorWrapper.jsx";
@@ -53,10 +53,10 @@ const isGuideEmpty = ({
     true;
 
 // This function generates a link for each important field of a Metric.
-// The link goes to a question comprised of this Metric broken out by
+// The link goes to a question comprised of this Metric broken out by 
 // That important field.
 const exploreLinksForMetric = (metricId, guide, metadataFields, tables) => {
-    if (guide.metric_important_fields[metricId]) {
+    if (guide.metric_important_fields[metricId]) { 
         return guide.metric_important_fields[metricId]
                 .map(fieldId => metadataFields[fieldId])
                 .map(field => ({
@@ -132,7 +132,7 @@ export default class GettingStartedGuide extends Component {
         return (
             <div className="full relative py4" style={style}>
                 <LoadingAndErrorWrapper className="full" style={style} loading={!loadingError && loading} error={loadingError}>
-                { () =>
+                { () => 
                     <div>
                         <GuideHeader
                             startEditing={startEditing}
@@ -142,15 +142,15 @@ export default class GettingStartedGuide extends Component {
                         <div className="wrapper wrapper--trim">
                             { (!guide || isGuideEmpty(guide)) && user && user.is_superuser && (
                                 <AdminInstructions>
-                                    <h2 className="py2">{t`Help your team get started with your data.`}</h2>
+                                    <h2 className="py2">Help your team get started with your data.</h2>
                                     <GuideText>
-                                        {t`Show your team what’s most important by choosing your top dashboard, metrics, and segments.`}
+                                        Show your team what’s most important by choosing your top dashboard, metrics, and segments.
                                     </GuideText>
                                     <button
                                         className="Button Button--primary"
                                         onClick={startEditing}
                                     >
-                                        {t`Get started`}
+                                        Get started
                                     </button>
                                 </AdminInstructions>
                             )}
@@ -158,7 +158,7 @@ export default class GettingStartedGuide extends Component {
                             { guide.most_important_dashboard !== null && [
                                 <div className="my2">
                                     <SectionHeader key={'dashboardTitle'}>
-                                        {t`Our most important dashboard`}
+                                        Our most important dashboard
                                     </SectionHeader>
                                     <GuideDetail
                                         key={'dashboardDetail'}
@@ -171,7 +171,7 @@ export default class GettingStartedGuide extends Component {
                             { Object.keys(metrics).length > 0  && (
                                     <div className="my4 pt4">
                                         <SectionHeader trim={guide.important_metrics.length === 0}>
-                                            { guide.important_metrics && guide.important_metrics.length > 0 ? t`Numbers that we pay attention to` : t`Metrics` }
+                                            { guide.important_metrics && guide.important_metrics.length > 0 ? 'Numbers that we pay attention to' : 'Metrics' }
                                         </SectionHeader>
                                         { (guide.important_metrics && guide.important_metrics.length > 0) ? [
                                             <div className="my2">
@@ -187,12 +187,12 @@ export default class GettingStartedGuide extends Component {
                                             </div>
                                         ] :
                                             <GuideText>
-                                                {t`Metrics are important numbers your company cares about. They often represent a core indicator of how the business is performing.`}
+                                                Metrics are important numbers your company cares about. They often represent a core indicator of how the business is performing.
                                             </GuideText>
                                         }
                                         <div>
                                             <Link className="Button Button--primary" to={'/reference/metrics'}>
-                                                {t`See all metrics`}
+                                                See all metrics
                                             </Link>
                                         </div>
                                     </div>
@@ -201,7 +201,7 @@ export default class GettingStartedGuide extends Component {
 
                             <div className="mt4 pt4">
                                 <SectionHeader trim={(!has(guide.important_segments) && !has(guide.important_tables))}>
-                                    { Object.keys(segments).length > 0 ? t`Segments and tables` : t`Tables` }
+                                    { Object.keys(segments).length > 0 ? 'Segments and tables' : 'Tables' }
                                 </SectionHeader>
                                 { has(guide.important_segments) || has(guide.important_tables) ?
                                     <div className="my2">
@@ -226,16 +226,16 @@ export default class GettingStartedGuide extends Component {
                                     <GuideText>
                                         { Object.keys(segments).length > 0 ? (
                                             <span>
-                                                {jt`Segments and tables are the building blocks of your company's data. Tables are collections of the raw information while segments are specific slices with specific meanings, like ${<b>"Recent orders."</b>}`}
+                                                Segments and tables are the building blocks of your company's data. Tables are collections of the raw information while segments are specific slices with specific meanings, like <b>"Recent orders."</b>
                                             </span>
-                                        ) : t`Tables are the building blocks of your company's data.`
+                                        ) : "Tables are the building blocks of your company's data."
                                         }
                                     </GuideText>
                                 }
                                 <div>
                                     { Object.keys(segments).length > 0 && (
                                         <Link className="Button Button--purple mr2" to={'/reference/segments'}>
-                                            {t`See all segments`}
+                                            See all segments
                                         </Link>
                                     )}
                                     <Link
@@ -245,33 +245,33 @@ export default class GettingStartedGuide extends Component {
                                         )}
                                         to={'/reference/databases'}
                                     >
-                                        {t`See all tables`}
+                                        See all tables
                                     </Link>
                                 </div>
                             </div>
 
                             <div className="mt4 pt4">
                                 <SectionHeader trim={!guide.things_to_know}>
-                                    { guide.things_to_know ? t`Other things to know about our data` : t`Find out more` }
+                                    { guide.things_to_know ? 'Other things to know about our data' : 'Find out more' }
                                 </SectionHeader>
                                 <GuideText>
-                                    { guide.things_to_know ? guide.things_to_know : t`A good way to get to know your data is by spending a bit of time exploring the different tables and other info available to you. It may take a while, but you'll start to recognize names and meanings over time.`
+                                    { guide.things_to_know ? guide.things_to_know : "A good way to get to know your data is by spending a bit of time exploring the different tables and other info available to you. It may take a while, but you'll start to recognize names and meanings over time."
                                     }
                                 </GuideText>
                                 <Link className="Button link text-bold" to={'/reference/databases'}>
-                                    {t`Explore our data`}
+                                    Explore our data
                                 </Link>
                             </div>
 
                             <div className="mt4">
                                 { guide.contact && (guide.contact.name || guide.contact.email) && [
                                     <SectionHeader key={'contactTitle'}>
-                                        {t`Have questions?`}
+                                        Have questions?
                                     </SectionHeader>,
                                     <div className="mb4 pb4" key={'contactDetails'}>
                                             { guide.contact.name &&
                                                 <span className="text-dark mr3">
-                                                    {t`Contact ${guide.contact.name}`}
+                                                    {`Contact ${guide.contact.name}`}
                                                 </span>
                                             }
                                             { guide.contact.email &&

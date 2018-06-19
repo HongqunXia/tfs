@@ -1,20 +1,20 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { t } from 'c-3po';
-import cx from 'classnames';
-import moment from "moment";
-import _ from "underscore";
+import PropTypes from "prop-types";
 
 import SpecificDatePicker from "./SpecificDatePicker";
-import RelativeDatePicker, { DATE_PERIODS } from "./RelativeDatePicker";
+import RelativeDatePicker, { DATE_PERIODS, UnitPicker } from "./RelativeDatePicker";
 import DateOperatorSelector from "../DateOperatorSelector";
-import DateUnitSelector from "../DateUnitSelector";
 import Calendar from "metabase/components/Calendar";
+
+import moment from "moment";
 
 import Query from "metabase/lib/query";
 import { mbqlEq } from "metabase/lib/query/util";
+import cx from "classnames";
 
+import _ from "underscore";
 
 import type {
     FieldFilter, TimeIntervalFilter,
@@ -81,15 +81,16 @@ class CurrentPicker extends Component {
     props: CurrentPickerProps;
     state: CurrentPickerState;
 
-    state = {
-        showUnits: false
-    };
+    constructor(props) {
+        super(props);
+        this.state = { showUnits: false };
+    }
 
     render() {
         const { filter: [operator, field, intervals, unit], onFilterChange } = this.props
         return (
-            <div className="flex-full mr2 mb2">
-                <DateUnitSelector
+            <div className="mx2">
+                <UnitPicker
                     value={unit}
                     open={this.state.showUnits}
                     onChange={(value) => {
@@ -108,7 +109,6 @@ class CurrentPicker extends Component {
 
 const getIntervals = ([op, field, value, unit]) => mbqlEq(op, "time-interval") && typeof value === "number" ? Math.abs(value) : 30;
 const getUnit      = ([op, field, value, unit]) => mbqlEq(op, "time-interval") && unit ? unit : "day";
-const getOptions   = ([op, field, value, unit, options]) => mbqlEq(op, "time-interval") && options || {};
 
 const getDate = (value) => {
     if (typeof value !== "string" || !moment(value).isValid()) {
@@ -149,74 +149,62 @@ function getDateTimeFieldAndValues(filter: FieldFilter, count: number): [Concret
 }
 
 
-export type OperatorName = "all"|"previous"|"next"|"current"|"before"|"after"|"on"|"between"|"empty"|"not-empty";
+export type OperatorName = string;
 
 export type Operator = {
     name: OperatorName,
-    displayName: string,
     widget?: any,
     init: (filter: FieldFilter) => any,
-    test: (filter: FieldFilter) => boolean,
-    options?: { [key: string]: any }
+    test: (filter: FieldFilter) => boolean
 }
 
 const ALL_TIME_OPERATOR = {
-    name: "all",
-    displayName: t`All Time`,
+    name: "All Time",
     init: () => null,
     test: (op) => op === null
 }
 
 export const DATE_OPERATORS: Operator[] = [
     {
-        name: "previous",
-        displayName: t`Previous`,
-        init: (filter) => ["time-interval", getDateTimeField(filter[1]), -getIntervals(filter), getUnit(filter), getOptions(filter)],
+        name: "Previous",
+        init: (filter) => ["time-interval", getDateTimeField(filter[1]), -getIntervals(filter), getUnit(filter)],
         // $FlowFixMe
         test: ([op, field, value]) => mbqlEq(op, "time-interval") && value < 0 || Object.is(value, -0),
         widget: PreviousPicker,
-        options: { "include-current": true },
     },
     {
-        name: "next",
-        displayName: t`Next`,
-        init: (filter) => ["time-interval", getDateTimeField(filter[1]), getIntervals(filter), getUnit(filter), getOptions(filter)],
+        name: "Next",
+        init: (filter) => ["time-interval", getDateTimeField(filter[1]), getIntervals(filter), getUnit(filter)],
         // $FlowFixMe
         test: ([op, field, value]) => mbqlEq(op, "time-interval") && value >= 0,
         widget: NextPicker,
-        options: { "include-current": true },
     },
     {
-        name: "current",
-        displayName: t`Current`,
+        name: "Current",
         init: (filter) => ["time-interval", getDateTimeField(filter[1]), "current", getUnit(filter)],
         test: ([op, field, value]) => mbqlEq(op, "time-interval") && value === "current",
         widget: CurrentPicker,
     },
     {
-        name: "before",
-        displayName: t`Before`,
+        name: "Before",
         init: (filter) =>  ["<", ...getDateTimeFieldAndValues(filter, 1)],
         test: ([op]) => op === "<",
         widget: SingleDatePicker,
     },
     {
-        name: "after",
-        displayName: t`After`,
+        name: "After",
         init: (filter) => [">", ...getDateTimeFieldAndValues(filter, 1)],
         test: ([op]) => op === ">",
         widget: SingleDatePicker,
     },
     {
-        name: "on",
-        displayName: t`On`,
+        name: "On",
         init: (filter) => ["=", ...getDateTimeFieldAndValues(filter, 1)],
         test: ([op]) => op === "=",
         widget: SingleDatePicker,
     },
     {
-        name: "between",
-        displayName: t`Between`,
+        name: "Between",
         init: (filter) => ["BETWEEN", ...getDateTimeFieldAndValues(filter, 2)],
         test: ([op]) => mbqlEq(op, "between"),
         widget: MultiDatePicker,
@@ -226,24 +214,18 @@ export const DATE_OPERATORS: Operator[] = [
 
 export const EMPTINESS_OPERATORS: Operator[] = [
     {
-        name: "empty",
-        displayName: t`Is Empty`,
+        name: "Is Empty",
         init: (filter) => ["IS_NULL", getDateTimeField(filter[1])],
         test: ([op]) => op === "IS_NULL"
     },
     {
-        name: "not-empty",
-        displayName: t`Not Empty`,
+        name: "Not Empty",
         init: (filter) => ["NOT_NULL", getDateTimeField(filter[1])],
         test: ([op]) => op === "NOT_NULL"
     }
 ];
 
 export const ALL_OPERATORS: Operator[] = DATE_OPERATORS.concat(EMPTINESS_OPERATORS);
-
-export function getOperator(filter: FieldFilter, operators?: Operator[] = ALL_OPERATORS) {
-    return _.find(operators, (o) => o.test(filter));
-}
 
 type Props = {
     className?: string,
@@ -264,40 +246,39 @@ export default class DatePicker extends Component {
         operators: []
     };
 
+    static propTypes = {
+        filter: PropTypes.array.isRequired,
+        onFilterChange: PropTypes.func.isRequired,
+        className: PropTypes.string,
+        hideEmptinessOperators: PropTypes.bool,
+        hideTimeSelectors: PropTypes.bool
+    };
+
     componentWillMount() {
         const operators = this.props.hideEmptinessOperators ? DATE_OPERATORS : ALL_OPERATORS;
 
-        const operator = getOperator(this.props.filter, operators) || operators[0];
+        const operator = this._getOperator(operators) || operators[0];
         this.props.onFilterChange(operator.init(this.props.filter));
 
         this.setState({ operators })
     }
 
+    _getOperator(operators: Operator[]) {
+        return _.find(operators, (o) => o.test(this.props.filter));
+    }
+
     render() {
-        const { filter, onFilterChange, includeAllTime } = this.props;
+        let { filter, onFilterChange, className, includeAllTime } = this.props;
         let { operators } = this.state;
         if (includeAllTime) {
             operators = [ALL_TIME_OPERATOR, ...operators];
         }
 
-        const operator = getOperator(this.props.filter, operators);
+        const operator = this._getOperator(operators);
         const Widget = operator && operator.widget;
 
-        // certain types of operators need to have a horizontal layout
-        // where the value is chosen next to the operator selector
-        // TODO - there's no doubt a cleaner _ way to do this
-        const needsHorizontalLayout = operator && (
-            operator.name === "current"  ||
-            operator.name === "previous" ||
-            operator.name === "next"
-        );
-
         return (
-            <div
-              // apply flex to align the operator selector and the "Widget" if necessary
-              className={cx("border-top pt2", { "flex align-center": needsHorizontalLayout })}
-              style={{ minWidth: 380 }}
-            >
+            <div className={cx("pt2", className)}>
                 <DateOperatorSelector
                     operator={operator && operator.name}
                     operators={operators}

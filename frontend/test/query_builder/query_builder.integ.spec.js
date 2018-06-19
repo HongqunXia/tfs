@@ -24,7 +24,6 @@ import {
     setDatasetQuery,
     NAVIGATE_TO_NEW_CARD,
     UPDATE_URL,
-    NOTIFY_CARD_UPDATED
 } from "metabase/query_builder/actions";
 import { SET_ERROR_PAGE } from "metabase/redux/app";
 
@@ -62,9 +61,6 @@ import ChartClickActions from "metabase/visualizations/components/ChartClickActi
 
 import { delay } from "metabase/lib/promise";
 import * as Urls from "metabase/lib/urls";
-import SaveQuestionModal from "metabase/containers/SaveQuestionModal";
-import Radio from "metabase/components/Radio";
-import QuestionSavedModal from "metabase/components/QuestionSavedModal";
 
 const REVIEW_PRODUCT_ID = 32;
 const REVIEW_RATING_ID = 33;
@@ -129,7 +125,7 @@ describe("QueryBuilder", () => {
         })
     })
 
-    describe("for saved queries", async () => {
+    describe("for saved questions", async () => {
         let savedQuestion = null;
         beforeAll(async () => {
             savedQuestion = await createSavedQuestion(unsavedOrderCountQuestion)
@@ -227,7 +223,7 @@ describe("QueryBuilder", () => {
             })
         })
         describe("with original saved question", () => {
-            it("should let you replace the original question", async () => {
+            it("should render normally on page load", async () => {
                 const store = await createTestStore()
                 const savedQuestion = await createSavedQuestion(unsavedOrderCountQuestion);
 
@@ -243,18 +239,6 @@ describe("QueryBuilder", () => {
                 const title = qbWrapper.find(QueryHeader).find("h1")
                 expect(title.text()).toBe("New question")
                 expect(title.parent().children().at(1).text()).toBe(`started from ${savedQuestion.displayName()}`)
-
-                // Click "SAVE" button
-                click(qbWrapper.find(".Header-buttonSection a").first().find("a"))
-
-                expect(qbWrapper.find(SaveQuestionModal).find(Radio).prop("value")).toBe("overwrite")
-                // Click Save in "Save question" dialog
-                clickButton(qbWrapper.find(SaveQuestionModal).find("button").last());
-                await store.waitForActions([NOTIFY_CARD_UPDATED])
-
-                // Should not show a "add to dashboard" dialog in this case
-                // This is included because of regression #6541
-                expect(qbWrapper.find(QuestionSavedModal).length).toBe(0)
             });
         });
     });

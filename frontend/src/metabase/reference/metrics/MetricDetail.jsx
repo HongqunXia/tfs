@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { reduxForm } from "redux-form";
 import { push } from "react-router-redux";
-import { t } from 'c-3po';
+
 import List from "metabase/components/List.jsx";
 import LoadingAndErrorWrapper from "metabase/components/LoadingAndErrorWrapper.jsx";
 import EditHeader from "metabase/reference/components/EditHeader.jsx";
@@ -71,7 +71,7 @@ const mapDispatchToProps = {
 };
 
 const validate = (values, props) =>  !values.revision_message ? 
-    { revision_message: t`Please enter a revision message` } : {} 
+    { revision_message: "Please enter a revision message" } : {} 
 
 @connect(mapStateToProps, mapDispatchToProps)
 @reduxForm({
@@ -153,7 +153,7 @@ export default class MetricDetail extends Component {
                     type="metric"
                     headerIcon="ruler"
                     headerLink={getQuestionUrl({ dbId: table && table.db_id, tableId: entity.table_id, metricId: entity.id})}
-                    name={t`Details`}
+                    name="Details"
                     user={user}
                     isEditing={isEditing}
                     hasSingleSchema={false}
@@ -169,9 +169,9 @@ export default class MetricDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="description"
-                                    name={t`Description`}
+                                    name="Description"
                                     description={entity.description}
-                                    placeholder={t`No description yet`}
+                                    placeholder="No description yet"
                                     isEditing={isEditing}
                                     field={description}
                                 />
@@ -179,9 +179,9 @@ export default class MetricDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="points_of_interest"
-                                    name={t`Why this Metric is interesting`}
+                                    name="Why this Metric is interesting"
                                     description={entity.points_of_interest}
-                                    placeholder={t`Nothing interesting yet`}
+                                    placeholder="Nothing interesting yet"
                                     isEditing={isEditing}
                                     field={points_of_interest}
                                     />
@@ -189,9 +189,9 @@ export default class MetricDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="caveats"
-                                    name={t`Things to be aware of about this Metric`}
+                                    name="Things to be aware of about this Metric"
                                     description={entity.caveats}
-                                    placeholder={t`Nothing to be aware of yet`}
+                                    placeholder="Nothing to be aware of yet"
                                     isEditing={isEditing}
                                     field={caveats}
                                 />
@@ -199,9 +199,9 @@ export default class MetricDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="how_is_this_calculated"
-                                    name={t`How this Metric is calculated`}
+                                    name="How this Metric is calculated"
                                     description={entity.how_is_this_calculated}
-                                    placeholder={t`Nothing on how it's calculated yet`}
+                                    placeholder="Nothing on how it's calculated yet"
                                     isEditing={isEditing}
                                     field={how_is_this_calculated}
                                 />
@@ -245,8 +245,8 @@ export default class MetricDetail extends Component {
                                         databaseId={table && table.db_id}
                                         metric={entity}
                                         title={ guide && guide.metric_important_fields[entity.id] ?
-                                            t`Other fields you can group this metric by` :
-                                            t`Fields you can group this metric by`
+                                            "Other fields you can group this metric by" :
+                                            "Fields you can group this metric by"
                                         }
                                         onChangeLocation={onChangeLocation}
                                     />

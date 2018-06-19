@@ -12,7 +12,7 @@ import CollectionList from "metabase/questions/containers/CollectionList";
 
 import Query from "metabase/lib/query";
 import { cancelable } from "metabase/lib/promise";
-import { t } from 'c-3po';
+
 import "./SaveQuestionModal.css";
 import ButtonWithStatus from "metabase/components/ButtonWithStatus";
 
@@ -127,7 +127,7 @@ export default class SaveQuestionModal extends Component {
         if (error) {
             var errorMessage;
             if (error.status === 500) {
-                errorMessage = t`Server error encountered`;
+                errorMessage = "Server error encountered";
             }
 
             if (error.data && error.data.message) {
@@ -149,7 +149,7 @@ export default class SaveQuestionModal extends Component {
         if (!this.props.card.id && this.props.originalCard) {
             saveOrUpdate = (
                 <FormField
-                    displayName={t`Replace or save as new?`}
+                    displayName="Replace or save as new?"
                     fieldName="saveType"
                     errors={this.state.errors}
                 >
@@ -157,8 +157,8 @@ export default class SaveQuestionModal extends Component {
                         value={this.state.details.saveType}
                         onChange={(value) => this.onChange("saveType", value)}
                         options={[
-                            { name: t`Replace original question, "${this.props.originalCard.name}"`, value: "overwrite" },
-                            { name: t`Save as new question`, value: "create" },
+                            { name: `Replace original question, "${this.props.originalCard.name}"`, value: "overwrite" },
+                            { name: "Save as new question", value: "create" },
                         ]}
                         isVertical
                     />
@@ -166,7 +166,7 @@ export default class SaveQuestionModal extends Component {
             );
         }
 
-        let title = this.props.multiStep ? t`First, save your question` : t`Save question`;
+        let title = this.props.multiStep ? "First, save your question" : "Save question";
 
         return (
             <ModalContent
@@ -175,7 +175,7 @@ export default class SaveQuestionModal extends Component {
                 footer={[
                         formError,
                         <Button onClick={this.props.onClose}>
-                            {t`Cancel`}
+                            Cancel
                         </Button>,
                         <ButtonWithStatus
                             disabled={!this.state.valid}
@@ -194,27 +194,27 @@ export default class SaveQuestionModal extends Component {
                         { details.saveType === "create" &&
                             <div key="saveQuestionModalFields" className="saveQuestionModalFields">
                                 <FormField
-                                    displayName={t`Name`}
+                                    displayName="Name"
                                     fieldName="name"
                                     errors={this.state.errors}
                                 >
                                     <input
                                         className="Form-input full"
-                                        name="name" placeholder={t`What is the name of your card?`}
+                                        name="name" placeholder="What is the name of your card?"
                                         value={this.state.details.name}
                                         onChange={(e) => this.onChange("name", e.target.value)}
                                         autoFocus
                                     />
                                 </FormField>
                                 <FormField
-                                    displayName={t`Description`}
+                                    displayName="Description"
                                     fieldName="description"
                                     errors={this.state.errors}
                                 >
                                     <textarea
                                         className="Form-input full"
                                         name="description"
-                                        placeholder={t`It's optional but oh, so helpful`}
+                                        placeholder="It's optional but oh, so helpful"
                                         value={this.state.details.description}
                                         onChange={(e) => this.onChange("description", e.target.value)}
                                     />
@@ -222,7 +222,7 @@ export default class SaveQuestionModal extends Component {
                                 <CollectionList writable>
                                 { (collections) => collections.length > 0 &&
                                     <FormField
-                                        displayName={t`Which collection should this go in?`}
+                                        displayName="Which collection should this go in?"
                                         fieldName="collection_id"
                                         errors={this.state.errors}
                                     >
@@ -231,7 +231,7 @@ export default class SaveQuestionModal extends Component {
                                             value={this.state.details.collection_id}
                                             onChange={e => this.onChange("collection_id", e.target.value)}
                                         >
-                                            {[{ name: t`None`, id: null }]
+                                            {[{ name: "None", id: null }]
                                             .concat(collections)
                                             .map((collection, index) =>
                                                 <Option

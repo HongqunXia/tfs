@@ -32,7 +32,7 @@ Object.defineProperty(window, "matchMedia", {
     } })
 });
 
-// We have to do some mocking here to avoid calls to GA and to Softheon settings
+// We have to do some mocking here to avoid calls to GA and to Metabase settings
 jest.mock('metabase/lib/settings', () => ({
     get: () => 'v'
 }))

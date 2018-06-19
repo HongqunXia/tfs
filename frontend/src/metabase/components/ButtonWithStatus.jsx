@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import cx from "classnames";
-import { t } from 'c-3po';
 
 let defaultTitleForState = {
-    default: t`Save`,
-    inProgress: t`Saving...`,
-    completed: t`Saved!`,
-    failed: t`Saving failed.`
+    default: "Save",
+    inProgress: "Saving...",
+    completed: "Saved!",
+    failed: "Saving failed."
 };
 
 

@@ -193,12 +193,11 @@
                                                                     "https://apis.google.com"
                                                                     "https://www.google-analytics.com" ; Safari requires the protocol
                                                                     "https://*.googleapis.com"
-                                                                    "*.gstatic.com"                                                                    
+                                                                    "*.gstatic.com"
                                                                     (when config/is-dev?
                                                                       "localhost:8080")]
                                                       :child-src   ["'self'"
-                                                                    "https://accounts.google.com" ; TODO - double check that we actually need this for Google Auth
-                                                                    "https://login-model.softheon.com"]
+                                                                    "https://accounts.google.com"] ; TODO - double check that we actually need this for Google Auth
                                                       :style-src   ["'unsafe-inline'"
                                                                     "'self'"
                                                                     "fonts.googleapis.com"]
@@ -210,10 +209,9 @@
                                                       :img-src     ["*"
                                                                     "'self' data:"]
                                                       :connect-src ["'self'"
-                                                                    "metabase.us10.list-manage.com"                                                                    
+                                                                    "metabase.us10.list-manage.com"
                                                                     (when config/is-dev?
-                                                                      "localhost:8080 ws://localhost:8080"
-                                                                      "https://login-model.softheon.com")]}]
+                                                                      "localhost:8080 ws://localhost:8080")]}]
                                           (format "%s %s; " (name k) (apply str (interpose " " vs)))))})
 
 (defsetting ssl-certificate-public-key

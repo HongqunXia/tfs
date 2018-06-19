@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import styles from "./Scalar.css";
-import { t } from 'c-3po';
+
 import Icon from "metabase/components/Icon.jsx";
 import Tooltip from "metabase/components/Tooltip.jsx";
 import Ellipsified from "metabase/components/Ellipsified.jsx";
@@ -19,7 +19,7 @@ import type { VisualizationProps } from "metabase/meta/types/Visualization";
 export default class Scalar extends Component {
     props: VisualizationProps;
 
-    static uiName = t`Number`;
+    static uiName = "Number";
     static identifier = "scalar";
     static iconName = "number";
 
@@ -59,7 +59,7 @@ export default class Scalar extends Component {
                 },
                 data: {
                     cols: [
-                        { base_type: TYPE.Text, display_name: t`Name`, name: "name" },
+                        { base_type: TYPE.Text, display_name: "Name", name: "name" },
                         { ...s.data.cols[0] }],
                     rows: [
                         [s.card.name, s.data.rows[0][0]]
@@ -73,7 +73,7 @@ export default class Scalar extends Component {
 
     static settings = {
         "scalar.locale": {
-            title: t`Separator style`,
+            title: "Separator style",
             widget: "select",
             props: {
                 options: [
@@ -86,19 +86,19 @@ export default class Scalar extends Component {
             default: "en"
         },
         "scalar.decimals": {
-            title: t`Number of decimal places`,
+            title: "Number of decimal places",
             widget: "number"
         },
         "scalar.prefix": {
-            title: t`Add a prefix`,
+            title: "Add a prefix",
             widget: "input"
         },
         "scalar.suffix": {
-            title: t`Add a suffix`,
+            title: "Add a suffix",
             widget: "input"
         },
         "scalar.scale": {
-            title: t`Multiply by a number`,
+            title: "Multiply by a number",
             widget: "number"
         },
     };

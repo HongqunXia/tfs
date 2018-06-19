@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import S from "metabase/components/Sidebar.css";
-import { t } from 'c-3po';
+
 import Breadcrumbs from "metabase/components/Breadcrumbs.jsx";
 import SidebarItem from "metabase/components/SidebarItem.jsx"
 
@@ -20,26 +20,26 @@ const MetricSidebar = ({
             <div className={S.breadcrumbs}>
                 <Breadcrumbs
                     className="py4"
-                    crumbs={[[t`Metrics`,"/reference/metrics"],
+                    crumbs={[["Metrics","/reference/metrics"],
                              [metric.name]]}
                     inSidebar={true}
-                    placeholder={t`Data Reference`}
+                    placeholder="Data Reference"
                 />
             </div>
                 <SidebarItem key={`/reference/metrics/${metric.id}`} 
                              href={`/reference/metrics/${metric.id}`} 
                              icon="document" 
-                             name={t`Details`} />
+                             name="Details" />
                 <SidebarItem key={`/reference/metrics/${metric.id}/questions`} 
                              href={`/reference/metrics/${metric.id}/questions`} 
                              icon="all" 
-                             name={t`Queries about ${metric.name}`} />
+                             name={`Questions about ${metric.name}`} />
              { user && user.is_superuser &&
 
                 <SidebarItem key={`/reference/metrics/${metric.id}/revisions`}
                              href={`/reference/metrics/${metric.id}/revisions`}
                              icon="history" 
-                             name={t`Revision history for ${metric.name}`} />
+                             name={`Revision history for ${metric.name}`} />
              }
         </ul>
     </div>

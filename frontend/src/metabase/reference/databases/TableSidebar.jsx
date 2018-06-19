@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import S from "metabase/components/Sidebar.css";
-import { t } from 'c-3po';
+
 import Breadcrumbs from "metabase/components/Breadcrumbs.jsx";
 import SidebarItem from "metabase/components/SidebarItem.jsx"
 
@@ -20,31 +20,31 @@ const TableSidebar = ({
         <div className={S.breadcrumbs}>
             <Breadcrumbs
                 className="py4"
-                crumbs={[[t`Databases`,"/reference/databases"],
+                crumbs={[["Databases","/reference/databases"],
                          [database.name, `/reference/databases/${database.id}`],
                          [table.name]]}
                 inSidebar={true}
-                placeholder={t`Data Reference`}
+                placeholder="Data Reference"
             />
         </div>
         <ol>
             <SidebarItem key={`/reference/databases/${database.id}/tables/${table.id}`}
                          href={`/reference/databases/${database.id}/tables/${table.id}`}
                          icon="document"
-                         name={t`Details`} />
+                         name="Details" />
             <SidebarItem key={`/reference/databases/${database.id}/tables/${table.id}/fields`}
                          href={`/reference/databases/${database.id}/tables/${table.id}/fields`}
                          icon="fields"
-                         name={t`Fields in this table`} />
+                         name="Fields in this table" />
             <SidebarItem key={`/reference/databases/${database.id}/tables/${table.id}/questions`}
                          href={`/reference/databases/${database.id}/tables/${table.id}/questions`}
                          icon="all"
-                         name={t`Queries about this table`} />
+                         name="Questions about this table" />
             { showXray && (
                 <SidebarItem key={`/xray/table/${table.id}/approximate`}
                              href={`/xray/table/${table.id}/approximate`}
                              icon="beaker"
-                             name={t`X-ray this table`} />
+                             name="X-ray this table" />
             )}
         </ol>
     </div>

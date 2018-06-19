@@ -10,7 +10,6 @@ export type ParameterType = string;
 
 // a URL-safe encoding of a parameter value
 export type ParameterValue = string;
-export type ParameterValueOrArray = string | Array<string>;
 
 export type Parameter = {
     id: ParameterId,

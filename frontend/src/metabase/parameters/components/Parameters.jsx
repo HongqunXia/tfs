@@ -70,7 +70,7 @@ export default class Parameters extends Component {
             search = (search ? "?" + search : "");
 
             if (search !== window.location.search) {
-                history.replaceState(null, document.title.replace("Metabase", "Softheon"), window.location.pathname + search + window.location.hash);
+                history.replaceState(null, document.title, window.location.pathname + search + window.location.hash);
             }
         }
     }

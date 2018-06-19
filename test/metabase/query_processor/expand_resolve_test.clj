@@ -88,7 +88,6 @@
                                                   {:field-id           true
                                                    :field-name         "PRICE"
                                                    :field-display-name "Price"
-                                                   :database-type      "INTEGER"
                                                    :base-type          :type/Integer
                                                    :special-type       :type/Category
                                                    :table-id           (id :venues)
@@ -102,7 +101,6 @@
                                                           {:field-id           true
                                                            :field-name         "PRICE"
                                                            :field-display-name "Price"
-                                                           :database-type      "INTEGER"
                                                            :base-type          :type/Integer
                                                            :special-type       :type/Category
                                                            :table-id           (id :venues)
@@ -156,7 +154,6 @@
                                                        :fk-field-id        (id :venues :category_id)
                                                        :field-name         "NAME"
                                                        :field-display-name "Name"
-                                                       :database-type      "VARCHAR"
                                                        :base-type          :type/Text
                                                        :special-type       :type/Name
                                                        :table-id           (id :categories)
@@ -173,7 +170,6 @@
                                                                :fk-field-id        (id :venues :category_id)
                                                                :field-name         "NAME"
                                                                :field-display-name "Name"
-                                                               :database-type      "VARCHAR"
                                                                :base-type          :type/Text
                                                                :special-type       :type/Name
                                                                :table-id           (id :categories)
@@ -230,7 +226,6 @@
                                                                :fk-field-id        (id :checkins :user_id)
                                                                :field-name         "LAST_LOGIN"
                                                                :field-display-name "Last Login"
-                                                               :database-type      "TIMESTAMP"
                                                                :base-type          :type/DateTime
                                                                :special-type       nil
                                                                :table-id           (id :users)
@@ -244,7 +239,6 @@
                                                                 :fk-field-id        (id :checkins :user_id)
                                                                 :field-name         "LAST_LOGIN"
                                                                 :field-display-name "Last Login"
-                                                                :database-type      "TIMESTAMP"
                                                                 :base-type          :type/DateTime
                                                                 :special-type       nil
                                                                 :visibility-type    :normal
@@ -292,8 +286,7 @@
                    :aggregation  [{:aggregation-type :sum
                                    :custom-name      nil
                                    :field            (merge field-defaults
-                                                            {:database-type      "INTEGER"
-                                                             :base-type          :type/Integer
+                                                            {:base-type          :type/Integer
                                                              :table-id           (id :venues)
                                                              :special-type       :type/Category
                                                              :field-name         "PRICE"
@@ -305,8 +298,7 @@
                                                              :fingerprint        {:global {:distinct-count 4}
                                                                                   :type   {:type/Number {:min 1, :max 4, :avg 2.03}}}})}]
                    :breakout     [{:field (merge field-defaults
-                                                 {:database-type      "DATE"
-                                                  :base-type          :type/Date
+                                                 {:base-type          :type/Date
                                                   :table-id           (id :checkins)
                                                   :special-type       nil
                                                   :field-name         "DATE"

@@ -67,7 +67,7 @@ const warnAboutCreatingStoreBeforeLogin = () => {
     }
 }
 /**
- * Login to the Softheon test instance with default credentials
+ * Login to the Metabase test instance with default credentials
  */
 export async function login({ username = "bob@metabase.com", password = "12341234" } = {}) {
     warnAboutCreatingStoreBeforeLogin()

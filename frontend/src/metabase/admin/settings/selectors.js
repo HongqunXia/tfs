@@ -1,7 +1,7 @@
 import _ from "underscore";
 import { createSelector } from "reselect";
 import MetabaseSettings from "metabase/lib/settings";
-import { t } from 'c-3po';
+
 import { slugify } from "metabase/lib/formatting";
 import CustomGeoJSONWidget from "./components/widgets/CustomGeoJSONWidget.jsx";
 import {
@@ -19,78 +19,80 @@ import { UtilApi } from "metabase/services";
 
 const SECTIONS = [
     {
-        name: t`Setup`,
+        name: "Setup",
         settings: []
     },
     {
-        name: t`General`,
+        name: "General",
         settings: [
             {
                 key: "site-name",
-                display_name: t`Site Name`,
+                display_name: "Site Name",
                 type: "string"
             },
             {
                 key: "site-url",
-                display_name: t`Site URL`,
+                display_name: "Site URL",
                 type: "string"
             },
             {
                 key: "admin-email",
-                display_name: t`Email Address for Help Requests`,
+                display_name: "Email Address for Help Requests",
                 type: "string"
             },
             {
                 key: "report-timezone",
-                display_name: t`Report Timezone`,
+                display_name: "Report Timezone",
                 type: "select",
                 options: [
-                    { name: t`Database Default`, value: "" },
+                    { name: "Database Default", value: "" },
                     ...MetabaseSettings.get('timezones')
                 ],
-                placeholder: t`Select a timezone`,
-                note: t`Not all databases support timezones, in which case this setting won't take effect.`,
+                placeholder: "Select a timezone",
+                note: "Not all databases support timezones, in which case this setting won't take effect.",
                 allowValueCollection: true
             },
             {
                 key: "site-locale",
-                display_name: t`Language`,
+                display_name: "Language",
                 type: "select",
                 options:  (MetabaseSettings.get("available_locales") || []).map(([value, name]) => ({ name, value })),
-                placeholder: t`Select a language`,
+                placeholder: "Select a language",
                 getHidden: () => MetabaseSettings.get("available_locales").length < 2
             },
             {
                 key: "anon-tracking-enabled",
-                display_name: t`Anonymous Tracking`,
+                display_name: "Anonymous Tracking",
                 type: "boolean"
             },
             {
-                key: "humanization-strategy",
-                display_name: t`Friendly Table and Field Names`,
-                type: "select",
-                options: [
-                    { value: "advanced", name: t`Enabled` },
-                    { value: "simple",   name: t`Only replace underscores and dashes with spaces` },
-                    { value: "none",     name: t`Disabled` }
-                ],
-                // this needs to be here because 'advanced' is the default value, so if you select 'advanced' the
-                // widget will always show the placeholder instead of the 'name' defined above :(
-                placeholder: t`Enabled`
+                key: "enable-advanced-humanization",
+                display_name: "Friendly Table and Field Names",
+                type: "boolean"
             },
             {
                 key: "enable-nested-queries",
-                display_name: t`Enable Nested Queries`,
+                display_name: "Enable Nested Queries",
                 type: "boolean"
             }
         ]
     },
     {
-        name: t`Email`,
+        name: "Updates",
+        settings: [
+            {
+                key: "check-for-updates",
+                display_name: "Check for updates",
+                type: "boolean"
+            }
+        ]
+    },
+    {
+        name: "Email",
         settings: [
             {
                 key: "email-smtp-host",
-                display_name: t`SMTP Host`,
+                display_name: "SMTP Host",
                 placeholder: "smtp.yourservice.com",
                 type: "string",
                 required: true,
@@ -98,15 +100,15 @@ const SECTIONS = [
             },
             {
                 key: "email-smtp-port",
-                display_name: t`SMTP Port`,
+                display_name: "SMTP Port",
                 placeholder: "587",
                 type: "number",
                 required: true,
-                validations: [["integer", t`That's not a valid port number`]]
+                validations: [["integer", "That's not a valid port number"]]
             },
             {
                 key: "email-smtp-security",
-                display_name: t`SMTP Security`,
+                display_name: "SMTP Security",
                 description: null,
                 type: "radio",
                 options: { none: "None", ssl: "SSL", tls: "TLS", starttls: "STARTTLS" },
@@ -114,25 +116,25 @@ const SECTIONS = [
             },
             {
                 key: "email-smtp-username",
-                display_name: t`SMTP Username`,
+                display_name: "SMTP Username",
                 description: null,
                 placeholder: "youlooknicetoday",
                 type: "string"
             },
             {
                 key: "email-smtp-password",
-                display_name: t`SMTP Password`,
+                display_name: "SMTP Password",
                 description: null,
                 placeholder: "Shh...",
                 type: "password"
             },
             {
                 key: "email-from-address",
-                display_name: t`From Address`,
+                display_name: "From Address",
                 placeholder: "metabase@yourcompany.com",
                 type: "string",
                 required: true,
-                validations: [["email", t`That's not a valid email address`]]
+                validations: [["email", "That's not a valid email address"]]
             }
         ]
     },
@@ -141,9 +143,9 @@ const SECTIONS = [
         settings: [
             {
                 key: "slack-token",
-                display_name: t`Slack API Token`,
+                display_name: "Slack API Token",
                 description: "",
-                placeholder: t`Enter the token you received from Slack`,
+                placeholder: "Enter the token you received from Slack",
                 type: "string",
                 required: false,
                 autoFocus: true
@@ -152,7 +154,7 @@ const SECTIONS = [
                 key: "metabot-enabled",
                 display_name: "MetaBot",
                 type: "boolean",
-                // TODO: why do we have "defaultValue" here in addition to the "default" specified by the backend?
+                // TODO: why do we have "defaultValue" in addition to "default" in the backend?
                 defaultValue: false,
                 required: true,
                 autoFocus: false
@@ -160,7 +162,7 @@ const SECTIONS = [
         ]
     },
     {
-        name: t`Single Sign-On`,
+        name: "Single Sign-On",
         sidebar: false,
         settings: [
             {
@@ -168,32 +170,26 @@ const SECTIONS = [
             },
             {
                 key: "google-auth-auto-create-accounts-domain"
-            },
-            {
-                key: "identity-server-uri"
-            },
-            {
-                key: "api-secret"
             }
         ]
     },
     {
-        name: t`Authentication`,
+        name: "Authentication",
         settings: []
     },
     {
-        name: t`LDAP`,
+        name: "LDAP",
         sidebar: false,
         settings: [
             {
                 key: "ldap-enabled",
-                display_name: t`LDAP Authentication`,
+                display_name: "LDAP Authentication",
                 description: null,
                 type: "boolean"
             },
             {
                 key: "ldap-host",
-                display_name: t`LDAP Host`,
+                display_name: "LDAP Host",
                 placeholder: "ldap.yourdomain.org",
                 type: "string",
                 required: true,
@@ -201,14 +197,14 @@ const SECTIONS = [
             },
             {
                 key: "ldap-port",
-                display_name: t`LDAP Port`,
+                display_name: "LDAP Port",
                 placeholder: "389",
                 type: "string",
-                validations: [["integer", t`That's not a valid port number`]]
+                validations: [["integer", "That's not a valid port number"]]
             },
             {
                 key: "ldap-security",
-                display_name: t`LDAP Security`,
+                display_name: "LDAP Security",
                 description: null,
                 type: "radio",
                 options: { none: "None", ssl: "SSL", starttls: "StartTLS" },
@@ -216,50 +212,50 @@ const SECTIONS = [
             },
             {
                 key: "ldap-bind-dn",
-                display_name: t`Username or DN`,
+                display_name: "Username or DN",
                 type: "string"
             },
             {
                 key: "ldap-password",
-                display_name: t`Password`,
+                display_name: "Password",
                 type: "password"
             },
             {
                 key: "ldap-user-base",
-                display_name: t`User search base`,
+                display_name: "User search base",
                 type: "string",
                 required: true
             },
             {
                 key: "ldap-user-filter",
-                display_name: t`User filter`,
+                display_name: "User filter",
                 type: "string",
-                validations: [["ldap_filter", t`Check your parentheses`]]
+                validations: [["ldap_filter", "Check your parentheses"]]
             },
             {
                 key: "ldap-attribute-email",
-                display_name: t`Email attribute`,
+                display_name: "Email attribute",
                 type: "string"
             },
             {
                 key: "ldap-attribute-firstname",
-                display_name: t`First name attribute`,
+                display_name: "First name attribute",
                 type: "string"
             },
             {
                 key: "ldap-attribute-lastname",
-                display_name: t`Last name attribute`,
+                display_name: "Last name attribute",
                 type: "string"
             },
             {
                 key: "ldap-group-sync",
-                display_name: t`Synchronize group memberships`,
+                display_name: "Synchronize group memberships",
                 description: null,
                 widget: LdapGroupMappingsWidget
             },
             {
                 key: "ldap-group-base",
-                display_name:t`"Group search base`,
+                display_name: "Group search base",
                 type: "string"
             },
             {
@@ -268,47 +264,47 @@ const SECTIONS = [
         ]
     },
     {
-        name: t`Maps`,
+        name: "Maps",
         settings: [
             {
                 key: "map-tile-server-url",
-                display_name: t`Map tile server URL`,
-                note: t`Softheon uses OpenStreetMaps by default.`,
+                display_name: "Map tile server URL",
+                note: "Metabase uses OpenStreetMaps by default.",
                 type: "string"
             },
             {
                 key: "custom-geojson",
-                display_name: t`Custom Maps`,
-                description: t`Add your own GeoJSON files to enable different region map visualizations`,
+                display_name: "Custom Maps",
+                description: "Add your own GeoJSON files to enable different region map visualizations",
                 widget: CustomGeoJSONWidget,
                 noHeader: true
             }
         ]
     },
     {
-        name: t`Public Sharing`,
+        name: "Public Sharing",
         settings: [
             {
                 key: "enable-public-sharing",
-                display_name: t`Enable Public Sharing`,
+                display_name: "Enable Public Sharing",
                 type: "boolean"
             },
             {
                 key: "-public-sharing-dashboards",
-                display_name: t`Shared Dashboards`,
+                display_name: "Shared Dashboards",
                 widget: PublicLinksDashboardListing,
                 getHidden: (settings) => !settings["enable-public-sharing"]
             },
             {
                 key: "-public-sharing-questions",
-                display_name: t`Shared Questions`,
+                display_name: "Shared Questions",
                 widget: PublicLinksQuestionListing,
                 getHidden: (settings) => !settings["enable-public-sharing"]
             }
         ]
     },
     {
-        name: t`Embedding in other Applications`,
+        name: "Embedding in other Applications",
         settings: [
             {
                 key: "enable-embedding",
@@ -324,7 +320,7 @@ const SECTIONS = [
                 }
             }, {
                 key: "enable-embedding",
-                display_name: t`Enable Embedding Softheon in other Applications`,
+                display_name: "Enable Embedding Metabase in other Applications",
                 type: "boolean",
                 getHidden: (settings) => !settings["enable-embedding"]
             },
@@ -334,49 +330,49 @@ const SECTIONS = [
             },
             {
                 key: "embedding-secret-key",
-                display_name: t`Embedding secret key`,
+                display_name: "Embedding secret key",
                 widget: SecretKeyWidget,
                 getHidden: (settings) => !settings["enable-embedding"]
             },
             {
                 key: "-embedded-dashboards",
-                display_name: t`Embedded Dashboards`,
+                display_name: "Embedded Dashboards",
                 widget: EmbeddedDashboardListing,
                 getHidden: (settings) => !settings["enable-embedding"]
             },
             {
                 key: "-embedded-questions",
-                display_name: t`Embedded Questions`,
+                display_name: "Embedded Questions",
                 widget: EmbeddedQuestionListing,
                 getHidden: (settings) => !settings["enable-embedding"]
             }
         ]
     },
     {
-        name: t`Caching`,
+        name: "Caching",
         settings: [
             {
                 key: "enable-query-caching",
-                display_name: t`Enable Caching`,
+                display_name: "Enable Caching",
                 type: "boolean"
             },
             {
                 key: "query-caching-min-ttl",
-                display_name: t`Minimum Query Duration`,
+                display_name: "Minimum Query Duration",
                 type: "number",
                 getHidden: (settings) => !settings["enable-query-caching"],
                 allowValueCollection: true
             },
             {
                 key: "query-caching-ttl-ratio",
-                display_name: t`Cache Time-To-Live (TTL) multiplier`,
+                display_name: "Cache Time-To-Live (TTL) multiplier",
                 type: "number",
                 getHidden: (settings) => !settings["enable-query-caching"],
                 allowValueCollection: true
             },
             {
                 key: "query-caching-max-kb",
-                display_name: t`Max Cache Entry Size`,
+                display_name: "Max Cache Entry Size",
                 type: "number",
                 getHidden: (settings) => !settings["enable-query-caching"],
                 allowValueCollection: true
@@ -384,11 +380,11 @@ const SECTIONS = [
         ]
     },
     {
-        name: t`X-Rays`,
+        name: "X-Rays",
         settings: [
             {
                 key: "enable-xrays",
-                display_name: t`Enable X-Rays`,
+                display_name: "Enable X-Rays",
                 type: "boolean",
                 allowValueCollection: true
             },

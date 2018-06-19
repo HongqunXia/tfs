@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import { List } from 'react-virtualized'
 import "react-virtualized/styles.css";
-import { t } from 'c-3po';
+
 import ColumnarSelector from "metabase/components/ColumnarSelector.jsx";
 import Icon from "metabase/components/Icon.jsx";
 import PopoverWithTrigger from "metabase/components/PopoverWithTrigger.jsx";
@@ -48,7 +48,6 @@ class BrowserSelect extends Component {
         // TODO - @kdoh
         // we should not allow this
         className: PropTypes.string,
-        compact: PropTypes.bool,
     }
     static defaultProps = {
         className: "",
@@ -107,18 +106,6 @@ class BrowserSelect extends Component {
         // make sure we filter by the search query
         children = children.filter(filter)
 
-        let extraProps = {}
-        if (this.props.compact) {
-          extraProps = {
-            tetherOptions: {
-                attachment: `top left`,
-                targetAttachment: `bottom left`,
-                targetOffset: `0px 0px`
-            },
-            hasArrow: false
-          }
-        }
-
         return (
             <PopoverWithTrigger
                 ref="popover"
@@ -127,7 +114,6 @@ class BrowserSelect extends Component {
                 triggerClasses={className}
                 verticalAttachments={["top"]}
                 isInitiallyOpen={isInitiallyOpen}
-                {...extraProps}
             >
                 <div className="flex flex-column">
                     { searchProp &&
@@ -247,7 +233,7 @@ class LegacySelect extends Component {
 
     static defaultProps = {
         placeholder: "",
-        emptyPlaceholder: t`Nothing to select`,
+        emptyPlaceholder: "Nothing to select",
         disabledOptionIds: [],
         optionNameFn: (option) => option.name,
         optionValueFn: (option) => option,

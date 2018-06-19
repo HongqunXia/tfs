@@ -1,5 +1,5 @@
 import React from "react";
-import { t } from 'c-3po';
+
 import Icon from "metabase/components/Icon";
 import cx from "classnames";
 
@@ -11,8 +11,8 @@ const ChartSettingFieldPicker = ({ value, options, onChange, onRemove }) =>
             value={value}
             options={options}
             onChange={onChange}
-            placeholder={t`Select a field`}
-            placeholderNoOptions={t`No valid fields`}
+            placeholder="Select a field"
+            placeholderNoOptions="No valid fields"
             isInitiallyOpen={value === undefined}
         />
         <Icon

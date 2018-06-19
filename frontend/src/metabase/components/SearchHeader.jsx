@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import S from "./SearchHeader.css";
 import Icon from "metabase/components/Icon.jsx";
 import cx from "classnames";
-import { t } from 'c-3po';
 
 const SearchHeader = ({ searchText, setSearchText, autoFocus, inputRef, resetSearchText }) =>
     <div className="flex align-center">
@@ -12,7 +11,7 @@ const SearchHeader = ({ searchText, setSearchText, autoFocus, inputRef, resetSea
         <input
             className={cx("input bg-transparent", S.searchBox)}
             type="text"
-            placeholder={t`Filter this list...`}
+            placeholder="Filter this list..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             autoFocus={!!autoFocus}

@@ -5,7 +5,8 @@
              [email :as email]
              [events :as events]
              [public-settings :as public-settings]
-             [setup :as setup]]
+             [setup :as setup]
+             [util :as u]]
             [metabase.api
              [common :as api]
              [database :as database-api :refer [DBEngineString]]]
@@ -15,7 +16,7 @@
              [session :refer [Session]]
              [user :as user :refer [User]]]
             [metabase.util.schema :as su]
-            [puppetlabs.i18n.core :refer [tru]]
+            [puppetlabs.i18n.core :as i18n :refer [tru]]
             [schema.core :as s]
             [toucan.db :as db]))
 
@@ -53,10 +54,8 @@
     ;; set a couple preferences
     (public-settings/site-name site_name)
     (public-settings/admin-email email)
-    ;; default to `true` if allow_tracking isn't specified. The setting will set itself correctly whether a boolean or
-    ;; boolean string is specified
-    (public-settings/anon-tracking-enabled (or (nil? allow_tracking)
-                                               allow_tracking))
+    (public-settings/anon-tracking-enabled (or (nil? allow_tracking) ; default to `true` if allow_tracking isn't specified
+                                               allow_tracking))      ; the setting will set itself correctly whether a boolean or boolean string is specified
     ;; setup database (if needed)
     (when (driver/is-engine? engine)
       (let [db (db/insert! Database
@@ -84,14 +83,25 @@
 
 (api/defendpoint POST "/validate"
   "Validate that we can connect to a database given a set of details."
-  [:as {{{:keys [engine details]} :details, token :token} :body}]
+  [:as {{{:keys [engine] {:keys [host port] :as details} :details} :details, token :token} :body}]
   {token  SetupToken
    engine DBEngineString}
   (let [engine           (keyword engine)
-        invalid-response (fn [field m] {:status 400, :body (if (#{:dbname :port :host} field)
-                                                             {:errors {field m}}
-                                                             {:message m})})]
-    (database-api/test-database-connection engine details :invalid-response-handler invalid-response)))
+        details          (assoc details :engine engine)
+        response-invalid (fn [field m] {:status 400 :body (if (= :general field)
+                                                            {:message m}
+                                                            {:errors {field m}})})]
+    ;; TODO - as @atte mentioned this should just use the same logic as we use in POST /api/database/, which tries with
+    ;; both SSL and non-SSL.
+    (try
+      (cond
+        (driver/can-connect-with-details? engine details :rethrow-exceptions) {:valid true}
+        (and host port (u/host-port-up? host port))                           (response-invalid :dbname  (format "Connection to '%s:%d' successful, but could not connect to DB." host port))
+        (and host (u/host-up? host))                                          (response-invalid :port    (format "Connection to '%s' successful, but port %d is invalid." port))
+        host                                                                  (response-invalid :host    (format "'%s' is not reachable" host))
+        :else                                                                 (response-invalid :general "Unable to connect to database."))
+      (catch Throwable e
+        (response-invalid :general (.getMessage e))))))
 
 
 ;;; Admin Checklist
@@ -113,29 +123,29 @@
       :link        "/admin/databases/create"
       :completed   has-dbs?
       :triggered   :always}
-     {:title       (tru "Set up email")
-      :group       (tru "Get connected")
-      :description (tru "Add email credentials so you can more easily invite team members and get updates via Pulses.")
+     {:title       "Set up email"
+      :group       "Get connected"
+      :description "Add email credentials so you can more easily invite team members and get updates via Pulses."
       :link        "/admin/settings/email"
       :completed   (email/email-configured?)
       :triggered   :always}
-     {:title       (tru "Set Slack credentials")
-      :group       (tru "Get connected")
-      :description (tru "Does your team use Slack? If so, you can send automated updates via pulses and ask questions with MetaBot.")
+     {:title       "Set Slack credentials"
+      :group       "Get connected"
+      :description "Does your team use Slack?  If so, you can send automated updates via pulses and ask questions with MetaBot."
       :link        "/admin/settings/slack"
       :completed   (slack/slack-configured?)
       :triggered   :always}
-     {:title       (tru "Invite team members")
-      :group       (tru "Get connected")
-      :description (tru "Share answers and data with the rest of your team.")
+     {:title       "Invite team members"
+      :group       "Get connected"
+      :description "Share answers and data with the rest of your team."
       :link        "/admin/people/"
       :completed   (> num-users 1)
       :triggered   (or has-dashboards?
                        has-pulses?
                        (>= num-cards 5))}
-     {:title       (tru "Hide irrelevant tables")
-      :group       (tru "Curate your data")
-      :description (tru "If your data contains technical or irrelevant info you can hide it.")
+     {:title       "Hide irrelevant tables"
+      :group       "Curate your data"
+      :description "If your data contains technical or irrelevant info you can hide it."
       :link        "/admin/datamodel/database"
       :completed   has-hidden-tables?
       :triggered   (>= num-tables 20)}
@@ -145,15 +155,15 @@
       :link        "/questions/"
       :completed   has-collections?
       :triggered   (>= num-cards 30)}
-     {:title       (tru "Create metrics")
-      :group       (tru "Curate your data")
-      :description (tru "Define canonical metrics to make it easier for the rest of your team to get the right answers.")
+     {:title       "Create metrics"
+      :group       "Curate your data"
+      :description "Define canonical metrics to make it easier for the rest of your team to get the right answers."
       :link        "/admin/datamodel/database"
       :completed   has-metrics?
       :triggered   (>= num-cards 30)}
-     {:title       (tru "Create segments")
-      :group       (tru "Curate your data")
-      :description (tru "Keep everyone on the same page by creating canonical sets of filters anyone can use while asking questions.")
+     {:title       "Create segments"
+      :group       "Curate your data"
+      :description "Keep everyone on the same page by creating canonical sets of filters anyone can use while asking questions."
       :link        "/admin/datamodel/database"
       :completed   has-segments?
       :triggered   (>= num-cards 30)}]))

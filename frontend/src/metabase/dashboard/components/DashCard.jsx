@@ -56,11 +56,11 @@ export default class DashCard extends Component {
             dashcard,
             dashcardData,
             slowCards,
+            parameterValues,
             isEditing,
             isEditingParameter,
             onAddSeries,
             onRemove,
-            onRefresh,
             navigateToNewCardFromDashboard,
             metadata
         } = this.props;
@@ -82,8 +82,16 @@ export default class DashCard extends Component {
         const expectedDuration = Math.max(...series.map((s) => s.card.query_average_duration || 0));
         const usuallyFast = _.every(series, (s) => s.isUsuallyFast);
         const isSlow = loading && _.some(series, (s) => s.isSlow) && (usuallyFast ? "usually-fast" : "usually-slow");
+
+        const parameterMap = dashcard && dashcard.parameter_mappings && dashcard.parameter_mappings
+            .reduce((map, mapping) => ({...map, [mapping.parameter_id]: mapping}), {});
+
+        const isMappedToAllParameters = !parameterValues || Object.keys(parameterValues)
+            .filter(parameterId => parameterValues[parameterId] !== null)
+            .every(parameterId => parameterMap[parameterId]);
+
         const errors = series.map(s => s.error).filter(e => e);
-        
+
         let errorMessage, errorIcon;
         if (_.any(errors, e => e && e.status === 403)) {
             errorMessage = ERROR_MESSAGE_PERMISSION;
@@ -101,6 +109,7 @@ export default class DashCard extends Component {
             <div
                 className={cx("Card bordered rounded flex flex-column hover-parent hover--visibility", {
                     "Card--recent": dashcard.isAdded,
+                    "Card--unmapped": !isMappedToAllParameters && !isEditing,
                     "Card--slow": isSlow === "usually-slow"
                 })}
             >
@@ -121,8 +130,7 @@ export default class DashCard extends Component {
                             onRemove={onRemove}
                             onAddSeries={onAddSeries}
                             onReplaceAllVisualizationSettings={this.props.onReplaceAllVisualizationSettings}
-                        /> : <DashCardRefreshButton 
-                                onRefresh={onRefresh} />
+                        /> : undefined
                     }
                     onUpdateVisualizationSettings={this.props.onUpdateVisualizationSettings}
                     replacementContent={isEditingParameter && <DashCardParameterMapper dashcard={dashcard} />}
@@ -142,16 +150,11 @@ const DashCardActionButtons = ({ series, onRemove, onAddSeries, onReplaceAllVisu
         { getVisualizationRaw(series).CardVisualization.supportsSeries &&
             <AddSeriesButton series={series} onAddSeries={onAddSeries} />
         }
-        { onReplaceAllVisualizationSettings && !getVisualizationRaw(series).CardVisualization.disableSettingsConfig &&
+        { onReplaceAllVisualizationSettings &&
             <ChartSettingsButton series={series} onReplaceAllVisualizationSettings={onReplaceAllVisualizationSettings} />
         }
         <RemoveButton onRemove={onRemove} />
     </span>
-
-const DashCardRefreshButton = ({onRefresh}) =>
-        <span>
-            <RefreshButton onRefresh={onRefresh} />
-        </span>
 
 const ChartSettingsButton = ({ series, onReplaceAllVisualizationSettings }) =>
     <ModalWithTrigger
@@ -170,11 +173,6 @@ const RemoveButton = ({ onRemove }) =>
     <a className="text-grey-2 text-grey-4-hover " data-metabase-event="Dashboard;Remove Card Modal" onClick={onRemove} style={HEADER_ACTION_STYLE}>
         <Icon name="close" size={HEADER_ICON_SIZE} />
     </a>
-
-const RefreshButton = ({onRefresh}) =>
-        <a className="text-grey-2 text-grey-4-hover" data-metabase-event="Dashboard;Refresh Card Modal" onClick={onRefresh} style={HEADER_ACTION_STYLE}>
-            <Icon name="refresh" size={HEADER_ICON_SIZE} />
-        </a>
 
 const AddSeriesButton = ({ series, onAddSeries }) =>
     <a

@@ -39,19 +39,19 @@
 
 (def ^:private ^:const abandonment-context
   {:heading      "We’d love your feedback."
-   :callToAction "It looks like Softheon Foundry wasn’t quite a match for you. Would you mind taking a fast 5 question survey to help the Metabase team understand why and make things better in the future?"
-   :link         ""})
+   :callToAction "It looks like Metabase wasn’t quite a match for you. Would you mind taking a fast 5 question survey to help the Metabase team understand why and make things better in the future?"
+   :link         "http://www.metabase.com/feedback/inactive"})
 
 (def ^:private ^:const follow-up-context
   {:heading      "We hope you've been enjoying Metabase."
    :callToAction "Would you mind taking a fast 6 question survey to tell us how it’s going?"
-   :link         ""})
+   :link         "http://www.metabase.com/feedback/active"})
 
 
 ;;; ### Public Interface
 
 (defn send-new-user-email!
-  "Send an email to INVITIED letting them know INVITOR has invited them to join Softheon Foundry."
+  "Send an email to INVITIED letting them know INVITOR has invited them to join Metabase."
   [invited invitor join-url]
   (let [company      (or (public-settings/site-name) "Unknown")
         message-body (stencil/render-file "metabase/email/new_user_invite"
@@ -65,7 +65,7 @@
                                :logoHeader   true}
                               (random-quote-context)))]
     (email/send-message!
-      :subject      (str "You're invited to join Softheon Foundry")
+      :subject      (str "You're invited to join " company "'s Metabase")
       :recipients   [(:email invited)]
       :message-type :html
       :message      message-body)))
@@ -86,8 +86,8 @@
   (let [recipients (all-admin-recipients)]
     (email/send-message!
       :subject      (format (if google-auth?
-                              "%s created a Softheon Foundry account"
-                              "%s accepted their Softheon Foundry invite")
+                              "%s created a Metabase account"
+                              "%s accepted their Metabase invite")
                             (:common_name new-user))
       :recipients   recipients
       :message-type :html
@@ -116,7 +116,7 @@
                         :passwordResetUrl password-reset-url
                         :logoHeader       true})]
     (email/send-message!
-      :subject      "[Softheon] Password Reset Request"
+      :subject      "[Metabase] Password Reset Request"
       :recipients   [email]
       :message-type :html
       :message      message-body)))
@@ -154,7 +154,7 @@
                             (random-quote-context))
         message-body (stencil/render-file "metabase/email/notification" context)]
     (email/send-message!
-      :subject      "[Softheon] Notification"
+      :subject      "[Metabase] Notification"
       :recipients   [email]
       :message-type :html
       :message      message-body)))
@@ -164,8 +164,8 @@
   [email msg-type]
   {:pre [(u/is-email? email) (contains? #{"abandon" "follow-up"} msg-type)]}
   (let [subject      (if (= "abandon" msg-type)
-                       "[Softheon] Help make Softheon Foundry better."
-                       "[Softheon] Tell us how things are going.")
+                       "[Metabase] Help make Metabase better."
+                       "[Metabase] Tell us how things are going.")
         context      (merge notification-context
                             (random-quote-context)
                             (if (= "abandon" msg-type)
@@ -178,33 +178,55 @@
       :message-type :html
       :message      message-body)))
 
-(defn- make-message-attachment [[content-id url]]
+
+;; HACK: temporary workaround to postal requiring a file as the attachment
+(defn- write-byte-array-to-temp-file
+  [^bytes img-bytes]
+  (u/prog1 (doto (File/createTempFile "metabase_pulse_image_" ".png")
+             .deleteOnExit)
+    (with-open [fos (FileOutputStream. <>)]
+      (.write fos img-bytes))))
+
+(defn- hash-bytes
+  "Generate a hash to be used in a Content-ID"
+  [^bytes img-bytes]
+  (Math/abs ^Integer (Arrays/hashCode img-bytes)))
+
+(defn- render-image [images-atom, ^bytes image-bytes]
+  (let [content-id (str (hash-bytes image-bytes) "@metabase")]
+    (if-not (contains? @images-atom content-id)
+      (swap! images-atom assoc content-id image-bytes))
+    (str "cid:" content-id)))
+
+(defn- write-image-content [[content-id bytes]]
   {:type         :inline
    :content-id   content-id
    :content-type "image/png"
-   :content      url})
+   :content      (write-byte-array-to-temp-file bytes)})
 
-(defn- pulse-context [pulse]
+(defn- pulse-context [body pulse]
   (merge {:emailType    "pulse"
+          :pulse        (html body)
           :pulseName    (:name pulse)
           :sectionStyle render/section-style
           :colorGrey4   render/color-gray-4
           :logoFooter   true}
          (random-quote-context)))
 
-(defn- render-message-body [message-template message-context timezone results]
-  (let [rendered-cards (binding [render/*include-title* true]
-                         ;; doall to ensure we haven't exited the binding before the valures are created
-                         (doall (map #(render/render-pulse-section timezone %) results)))
-        message-body   (assoc message-context :pulse (html (vec (cons :div (map :content rendered-cards)))))
-        attachments    (apply merge (map :attachments rendered-cards))]
-    (vec (cons {:type "text/html; charset=utf-8" :content (stencil/render-file message-template message-body)}
-               (map make-message-attachment attachments)))))
+(defn- render-message-body
+  [message-template message-context images]
+  (vec (cons {:type "text/html; charset=utf-8" :content (stencil/render-file message-template message-context)}
+             (map write-image-content images))))
 
 (defn render-pulse-email
   "Take a pulse object and list of results, returns an array of attachment objects for an email"
   [timezone pulse results]
-  (render-message-body "metabase/email/pulse" (pulse-context pulse) timezone results))
+  (let [images       (atom {})
+        body         (binding [render/*include-title* true
+                               render/*render-img-fn* (partial render-image images)]
+                       (vec (cons :div (for [result results]
+                                         (render/render-pulse-section timezone result)))))]
+    (render-message-body "metabase/email/pulse" (pulse-context body pulse) (seq @images))))
 
 (defn pulse->alert-condition-kwd
   "Given an `ALERT` return a keyword representing what kind of goal needs to be met."
@@ -245,10 +267,15 @@
 (defn render-alert-email
   "Take a pulse object and list of results, returns an array of attachment objects for an email"
   [timezone {:keys [alert_first_only] :as alert} results goal-value]
-  (let [message-ctx  (default-alert-context alert (alert-results-condition-text goal-value))]
+  (let [images       (atom {})
+        body         (binding [render/*include-title* true
+                               render/*render-img-fn* (partial render-image images)]
+                       (html (vec (cons :div (for [result results]
+                                               (render/render-pulse-section timezone result))))))
+        message-ctx  (default-alert-context alert (alert-results-condition-text goal-value))]
     (render-message-body "metabase/email/alert"
-                         (assoc message-ctx :firstRunOnly? alert_first_only)
-                         timezone results)))
+                         (assoc message-ctx :pulse body :firstRunOnly? alert_first_only)
+                         (seq @images))))
 
 (def ^:private alert-condition-text
   {:meets "when this question meets its goal"

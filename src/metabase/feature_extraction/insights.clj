@@ -216,10 +216,9 @@
    http://mathworld.wolfram.com/LeastSquaresFittingPowerLaw.html
    http://mathworld.wolfram.com/LeastSquaresFittingLogarithmic.html"
   [best-fit]
-  (when best-fit
-    {:mode  (if (-> best-fit :params second pos?)
-              :growing
-              :decreasing)
-     :shape ({:linear-regression     :linearly
-              :power-law-regression  :exponentally
-              :log-linear-regression :logarithmically} (:model best-fit))}))
+  {:mode  (if (-> best-fit :params second pos?)
+            :growing
+            :decreasing)
+   :shape ({:linear-regression     :linearly
+            :power-law-regression  :exponentally
+            :log-linear-regression :logarithmically} (:model best-fit))})

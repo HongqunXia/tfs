@@ -6,9 +6,7 @@
              [http-client :as http]
              [middleware :as middleware]
              [util :as u]]
-            [metabase.api
-             [card-test :as card-api-test]
-             [dashboard :as dashboard-api]]
+            [metabase.api.card-test :as card-api-test]
             [metabase.models
              [card :refer [Card]]
              [dashboard :refer [Dashboard]]
@@ -118,6 +116,7 @@
   (merge dashboard-defaults
          {:name          "Test Dashboard"
           :creator_id    (user->id :rasta)
+          :creator       (user-details (fetch-user :rasta))
           :ordered_cards [{:sizeX                  2
                            :sizeY                  2
                            :col                    0
@@ -129,12 +128,12 @@
                            :card                   (merge card-api-test/card-defaults
                                                           {:name                   "Dashboard Test Card"
                                                            :creator_id             (user->id :rasta)
+                                                           :creator                (user-details (fetch-user :rasta))
                                                            :display                "table"
                                                            :query_type             nil
                                                            :dataset_query          {}
                                                            :visualization_settings {}
                                                            :query_average_duration nil
-                                                           :in_public_dashboard    false
                                                            :result_metadata        nil})
                            :series                 []}]})
   ;; fetch a dashboard WITH a dashboard card on it
@@ -535,7 +534,7 @@
   (tu/with-temporary-setting-values [enable-public-sharing true]
     ((user->client :crowberto) :delete 404 (format "dashboard/%d/public_link" Integer/MAX_VALUE))))
 
-;; Test that we can fetch a list of publicly-accessible dashboards
+;; Test that we can fetch a list of publically-accessible dashboards
 (expect
   [{:name true, :id true, :public_uuid true}]
   (tu/with-temporary-setting-values [enable-public-sharing true]
@@ -552,13 +551,18 @@
         (m/map-vals boolean (select-keys dash [:name :id]))))))
 
 
-;;; -------------------------------- Tests for including query average duration info ---------------------------------
+;;; ------------------------------------------------------------ Tests for including query average duration info ------------------------------------------------------------
+
+(tu/resolve-private-vars metabase.api.dashboard
+  dashcard->query-hashes
+  dashcards->query-hashes
+  add-query-average-duration-to-dashcards)
 
 (expect
   [[-109 -42 53 92 -31 19 -111 13 -11 -111 127 -110 -12 53 -42 -3 -58 -61 60 97 123 -65 -117 -110 -27 -2 -99 102 -59 -29 49 27]
    [43 -96 52 23 -69 81 -59 15 -74 -59 -83 -9 -110 40 1 -64 -117 -44 -67 79 -123 -9 -107 20 113 -59 -93 25 60 124 -110 -30]]
   (tu/vectorize-byte-arrays
-    (#'dashboard-api/dashcard->query-hashes {:card {:dataset_query {:database 1}}})))
+    (dashcard->query-hashes {:card {:dataset_query {:database 1}}})))
 
 (expect
   [[89 -75 -86 117 -35 -13 -69 -36 -17 84 37 86 -121 -59 -3 1 37 -117 -86 -42 -127 -42 -74 101 83 72 10 44 75 -126 43 66]
@@ -568,9 +572,9 @@
    [-84 -2 87 22 -4 105 68 48 -113 93 -29 52 3 102 123 -70 -123 36 31 76 -16 87 70 116 -93 109 -88 108 125 -36 -43 73]
    [90 127 103 -71 -76 -36 41 -107 -7 -13 -83 -87 28 86 -94 110 74 -86 110 -54 -128 124 102 -73 -127 88 77 -36 62 5 -84 -100]]
   (tu/vectorize-byte-arrays
-    (#'dashboard-api/dashcard->query-hashes {:card   {:dataset_query {:database 2}}
-                                             :series [{:dataset_query {:database 3}}
-                                                      {:dataset_query {:database 4}}]})))
+    (dashcard->query-hashes {:card   {:dataset_query {:database 2}}
+                             :series [{:dataset_query {:database 3}}
+                                      {:dataset_query {:database 4}}]})))
 
 (expect
   [[-109 -42 53 92 -31 19 -111 13 -11 -111 127 -110 -12 53 -42 -3 -58 -61 60 97 123 -65 -117 -110 -27 -2 -99 102 -59 -29 49 27]
@@ -581,10 +585,10 @@
    [116 69 -44 77 100 8 -40 -67 25 -4 27 -21 111 98 -45 85 83 -27 -39 8 63 -25 -88 74 32 -10 -2 35 102 -72 -104 111]
    [-84 -2 87 22 -4 105 68 48 -113 93 -29 52 3 102 123 -70 -123 36 31 76 -16 87 70 116 -93 109 -88 108 125 -36 -43 73]
    [90 127 103 -71 -76 -36 41 -107 -7 -13 -83 -87 28 86 -94 110 74 -86 110 -54 -128 124 102 -73 -127 88 77 -36 62 5 -84 -100]]
-  (tu/vectorize-byte-arrays (#'dashboard-api/dashcards->query-hashes [{:card   {:dataset_query {:database 1}}}
-                                                                      {:card   {:dataset_query {:database 2}}
-                                                                       :series [{:dataset_query {:database 3}}
-                                                                                {:dataset_query {:database 4}}]}])))
+  (tu/vectorize-byte-arrays (dashcards->query-hashes [{:card   {:dataset_query {:database 1}}}
+                                                      {:card   {:dataset_query {:database 2}}
+                                                       :series [{:dataset_query {:database 3}}
+                                                                {:dataset_query {:database 4}}]}])))
 
 (expect
   [{:card   {:dataset_query {:database 1}, :query_average_duration 111}
@@ -592,7 +596,7 @@
    {:card   {:dataset_query {:database 2}, :query_average_duration 333}
     :series [{:dataset_query {:database 3}, :query_average_duration 555}
              {:dataset_query {:database 4}, :query_average_duration 777}]}]
-  (#'dashboard-api/add-query-average-duration-to-dashcards
+  (add-query-average-duration-to-dashcards
    [{:card   {:dataset_query {:database 1}}}
     {:card   {:dataset_query {:database 2}}
      :series [{:dataset_query {:database 3}}

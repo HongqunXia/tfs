@@ -1,7 +1,7 @@
 import React from "react";
 
 import { inflect } from "metabase/lib/formatting";
-import { t } from 'c-3po';
+
 import Tooltip from "metabase/components/Tooltip";
 
 const GroupName = ({ group }) =>
@@ -33,10 +33,10 @@ const PermissionsConfirm = ({ diff }) =>
                     { (database.grantedTables || database.revokedTables) &&
                         <div>
                             <GroupName group={group} />
-                            {t` will be `}
-                            {database.grantedTables && <TableAccessChange verb={t`given access to`} color="text-success" tables={database.grantedTables} /> }
-                            {database.grantedTables && database.revokedTables && t` and `}}
-                            {database.revokedTables && <TableAccessChange verb={t`denied access to`} color="text-warning" tables={database.revokedTables} /> }
+                            {" will be "}
+                            {database.grantedTables && <TableAccessChange verb="given access to" color="text-success" tables={database.grantedTables} /> }
+                            {database.grantedTables && database.revokedTables && " and "}
+                            {database.revokedTables && <TableAccessChange verb="denied access to" color="text-warning" tables={database.revokedTables} /> }
                             {" in "}
                             <DatabaseName database={database} />
                             {"."}
@@ -46,9 +46,9 @@ const PermissionsConfirm = ({ diff }) =>
                         <div>
                             <GroupName group={group} />
                             { database.native === "none" ?
-                                t` will no longer able to `
+                                " will no longer able to "
                             :
-                                t` will now be able to `
+                                " will now be able to "
                             }
                             { database.native === "read" ?
                                 <span className="text-gold">read</span>
@@ -57,7 +57,7 @@ const PermissionsConfirm = ({ diff }) =>
                             :
                                 <span>read or write</span>
                             }
-                            {t` native queries for `}
+                            {" native queries for "}
                             <DatabaseName database={database} />
                             {"."}
                         </div>

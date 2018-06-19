@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { t } from 'c-3po';
+
 import Icon from "metabase/components/Icon.jsx";
 import PopoverWithTrigger from "metabase/components/PopoverWithTrigger.jsx";
 import AccordianList from "metabase/components/AccordianList.jsx";
-import LoadingAndErrorWrapper from "metabase/components/LoadingAndErrorWrapper"
 
 import { isQueryable } from 'metabase/lib/table';
 import { titleize, humanize } from 'metabase/lib/formatting';
@@ -147,15 +146,9 @@ export default class DataSelector extends Component {
         return this.props.datasetQuery.query && this.props.datasetQuery.query.source_table;
     }
 
-    renderDatabasePicker = ({ maxHeight }) => {
-        const { databases } = this.state;
-
-        if (databases.length === 0) {
-            return <LoadingAndErrorWrapper loading />;
-        }
-
+    renderDatabasePicker() {
         let sections = [{
-            items: databases.map(database => ({
+            items: this.state.databases.map(database => ({
                 name: database.name,
                 database: database
             }))
@@ -164,9 +157,8 @@ export default class DataSelector extends Component {
         return (
             <AccordianList
                 id="DatabasePicker"
-                key="databasePicker"
+                key="schemaPicker"
                 className="text-brand"
-                maxHeight={maxHeight}
                 sections={sections}
                 onChange={this.onChangeTable}
                 itemIsSelected={(item) => this.getDatabaseId() === item.database.id}
@@ -176,12 +168,8 @@ export default class DataSelector extends Component {
         );
     }
 
-    renderDatabaseSchemaPicker = ({ maxHeight }) => {
+    renderDatabaseSchemaPicker() {
         const { databases, selectedSchema } = this.state;
-
-        if (databases.length === 0) {
-            return <LoadingAndErrorWrapper loading />;
-        }
 
         let sections = databases
             .map(database => ({
@@ -200,9 +188,8 @@ export default class DataSelector extends Component {
             <div>
                 <AccordianList
                     id="DatabaseSchemaPicker"
-                    key="databaseSchemaPicker"
+                    key="schemaPicker"
                     className="text-brand"
-                    maxHeight={maxHeight}
                     sections={sections}
                     onChange={this.onChangeSchema}
                     onChangeSection={this.onChangeDatabase}
@@ -223,7 +210,7 @@ export default class DataSelector extends Component {
         );
     }
 
-    renderSegmentAndDatabasePicker = ({ maxHeight }) => {
+    renderSegmentAndDatabasePicker() {
         const { selectedSchema } = this.state;
 
         const segmentItem = [{ name: 'Segments', items: [], icon: 'segment'}];
@@ -243,10 +230,8 @@ export default class DataSelector extends Component {
 
         return (
             <AccordianList
-                id="SegmentAndDatabasePicker"
-                key="segmentAndDatabasePicker"
+                key="schemaPicker"
                 className="text-brand"
-                maxHeight={maxHeight}
                 sections={sections}
                 onChange={this.onChangeSchema}
                 onChangeSection={(index) => index === 0 ?
@@ -263,7 +248,7 @@ export default class DataSelector extends Component {
         );
     }
 
-    renderTablePicker = ({ maxHeight }) => {
+    renderTablePicker() {
         const schema = this.state.selectedSchema;
 
         const isSavedQuestionList = schema.database.is_saved_questions;
@@ -292,7 +277,7 @@ export default class DataSelector extends Component {
                             <h3 className="text-default">{header}</h3>
                         </div>
                     </div>
-                    <div className="p4 text-centered">{t`No tables found in this database.`}</div>
+                    <div className="p4 text-centered">No tables found in this database.</div>
                 </section>
             );
         } else {
@@ -312,18 +297,18 @@ export default class DataSelector extends Component {
                         id="TablePicker"
                         key="tablePicker"
                         className="text-brand"
-                        maxHeight={maxHeight}
                         sections={sections}
-                        searchable
+                        searchable={true}
                         onChange={this.onChangeTable}
                         itemIsSelected={(item) => item.table ? item.table.id === this.getTableId() : false}
                         itemIsClickable={(item) => item.table && !item.disabled}
                         renderItemIcon={(item) => item.table ? <Icon name="table2" size={18} /> : null}
+                        hideSingleSectionTitle={true}
                     />
                     { isSavedQuestionList && (
-                        <div className="bg-slate-extra-light p2 text-centered border-top">
-                            {t`Is a question missing?`}
-                            <a href="" className="block link">{t`Learn more about nested queries`}</a>
+                        <div className="bg-slate-extra-light p2 text-centered">
+                            Is a question missing?
+                            <a href="http://metabase.com/docs/latest/users-guide/04-asking-questions.html#source-data" className="block link">Learn more about nested queries</a>
                         </div>
                     )}
                 </div>
@@ -331,14 +316,14 @@ export default class DataSelector extends Component {
         }
     }
 
-    //TODO: refactor this. lots of shared code with renderTablePicker = () =>
-    renderSegmentPicker = ({ maxHeight }) => {
+    //TODO: refactor this. lots of shared code with renderTablePicker()
+    renderSegmentPicker() {
         const { segments } = this.props;
         const header = (
             <span className="flex align-center">
                 <span className="flex align-center text-slate cursor-pointer" onClick={this.onBack}>
                     <Icon name="chevronleft" size={18} />
-                    <span className="ml1">{t`Segments`}</span>
+                    <span className="ml1">Segments</span>
                 </span>
             </span>
         );
@@ -351,7 +336,7 @@ export default class DataSelector extends Component {
                             <h3 className="text-default">{header}</h3>
                         </div>
                     </div>
-                    <div className="p4 text-centered">{t`No segments were found.`}</div>
+                    <div className="p4 text-centered">No segments were found.</div>
                 </section>
             );
         }
@@ -368,13 +353,11 @@ export default class DataSelector extends Component {
 
         return (
             <AccordianList
-                id="SegmentPicker"
                 key="segmentPicker"
                 className="text-brand"
-                maxHeight={maxHeight}
                 sections={sections}
-                searchable
-                searchPlaceholder={t`Find a segment`}
+                searchable={true}
+                searchPlaceholder="Find a segment"
                 onChange={this.onChangeSegment}
                 itemIsSelected={(item) => item.segment ? item.segment.id === this.getSegmentId() : false}
                 itemIsClickable={(item) => item.segment && !item.disabled}
@@ -401,19 +384,19 @@ export default class DataSelector extends Component {
             } else if (segment) {
                 content = <span className="text-grey no-decoration">{segment.name}</span>;
             } else {
-                content = <span className="text-grey-4 no-decoration">{t`Pick a segment or table`}</span>;
+                content = <span className="text-grey-4 no-decoration">Pick a segment or table</span>;
             }
         } else if (this.props.includeTables) {
             if (table) {
                 content = <span className="text-grey no-decoration">{table.display_name || table.name}</span>;
             } else {
-                content = <span className="text-grey-4 no-decoration">{t`Select a table`}</span>;
+                content = <span className="text-grey-4 no-decoration">Select a table</span>;
             }
         } else {
             if (database) {
                 content = <span className="text-grey no-decoration">{database.name}</span>;
             } else {
-                content = <span className="text-grey-4 no-decoration">{t`Select a database`}</span>;
+                content = <span className="text-grey-4 no-decoration">Select a database</span>;
             }
         }
 
@@ -428,20 +411,21 @@ export default class DataSelector extends Component {
             <PopoverWithTrigger
                 id="DataPopover"
                 ref="popover"
+                sizeToFit
                 isInitiallyOpen={this.props.isInitiallyOpen}
                 triggerElement={triggerElement}
                 triggerClasses="flex align-center"
                 horizontalAttachments={this.props.segments ? ["center", "left", "right"] : ["left"]}
             >
                 { !this.props.includeTables ?
-                    this.renderDatabasePicker :
+                    this.renderDatabasePicker() :
                     this.state.selectedSchema && this.state.showTablePicker ?
-                        this.renderTablePicker :
+                        this.renderTablePicker() :
                         this.props.segments ?
                             this.state.showSegmentPicker ?
-                                this.renderSegmentPicker :
-                                this.renderSegmentAndDatabasePicker :
-                            this.renderDatabaseSchemaPicker
+                                this.renderSegmentPicker() :
+                                this.renderSegmentAndDatabasePicker() :
+                            this.renderDatabaseSchemaPicker()
                 }
             </PopoverWithTrigger>
         );

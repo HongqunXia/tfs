@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import S from "metabase/components/Sidebar.css";
-import { t } from 'c-3po';
+
 import Breadcrumbs from "metabase/components/Breadcrumbs.jsx";
 import SidebarItem from "metabase/components/SidebarItem.jsx"
 
@@ -20,17 +20,17 @@ const SegmentFieldSidebar = ({
             <div className={S.breadcrumbs}>
                 <Breadcrumbs
                     className="py4"
-                    crumbs={[[t`Segments`,"/reference/segments"],
+                    crumbs={[["Segments","/reference/segments"],
                              [segment.name, `/reference/segments/${segment.id}`],
                              [field.name]]}
                     inSidebar={true}
-                    placeholder={t`Data Reference`}
+                    placeholder="Data Reference"
                 />
             </div>
                 <SidebarItem key={`/reference/segments/${segment.id}/fields/${field.id}`} 
                              href={`/reference/segments/${segment.id}/fields/${field.id}`} 
                              icon="document" 
-                             name={t`Details`} />
+                             name="Details" />
         </ul>
     </div>
 

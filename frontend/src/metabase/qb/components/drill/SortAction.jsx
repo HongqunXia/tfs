@@ -2,7 +2,7 @@
 
 import Query from "metabase/lib/query";
 import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
-import { t } from "c-3po";
+
 import type {
     ClickAction,
     ClickActionProps
@@ -42,7 +42,7 @@ export default ({ question, clicked }: ClickActionProps): ClickAction[] => {
         actions.push({
             name: "sort-ascending",
             section: "sort",
-            title: t`Ascending`,
+            title: "Ascending",
             question: () =>
                 query.replaceSort([fieldRef, "ascending"]).question()
         });
@@ -55,7 +55,7 @@ export default ({ question, clicked }: ClickActionProps): ClickAction[] => {
         actions.push({
             name: "sort-descending",
             section: "sort",
-            title: t`Descending`,
+            title: "Descending",
             question: () =>
                 query.replaceSort([fieldRef, "descending"]).question()
         });

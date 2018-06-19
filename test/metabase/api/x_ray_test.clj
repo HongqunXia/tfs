@@ -16,10 +16,9 @@
 
 (defn- async-call
   [method endpoint & args]
-  (let [client (user->client :rasta)
-        job-id (:job-id (apply client method 200 endpoint args))]
-    (result! job-id)
-    (:result (client :get 200 (str "async/" job-id)))))
+  (->> (apply (user->client :rasta) method 200 endpoint args)
+       :job-id
+       (call-with-retries :rasta)))
 
 (expect
   100.0

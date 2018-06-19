@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Icon from "metabase/components/Icon";
 import { capitalize } from "humanize-plus"
-import { t } from 'c-3po';
 
 const propTypes = {
   provider: PropTypes.string.isRequired
@@ -14,7 +13,8 @@ class SSOLoginButton extends Component {
     return (
         <div className="relative z2 bg-white p2 cursor-pointer shadow-hover text-centered sm-text-left rounded block sm-inline-block bordered shadowed">
             <div className="flex align-center">
-                <h4>{t`Sign in with Softheon`}</h4>
+                <Icon className="mr1" name={provider} />
+                <h4>{`Sign in with ${capitalize(provider)}`}</h4>
             </div>
         </div>
     )

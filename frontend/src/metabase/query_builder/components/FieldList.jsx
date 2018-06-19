@@ -26,7 +26,6 @@ export type AccordianListSection = {
 
 type Props = {
     className?: string,
-    maxHeight?: number,
 
     field: ?ConcreteField,
     onFieldChange: (field: ConcreteField) => void,
@@ -209,7 +208,6 @@ export default class FieldList extends Component {
         return (
             <AccordianList
                 className={this.props.className}
-                maxHeight={this.props.maxHeight}
                 sections={this.state.sections}
                 onChange={this.onChange}
                 itemIsSelected={this.itemIsSelected}

@@ -8,9 +8,6 @@ import promise from "redux-promise";
 import logger from "redux-logger";
 
 import { DEBUG } from "metabase/lib/debug";
-import createOidcMiddleware, { createUserManager, loadUser } from 'redux-oidc';
-
-import userManager from './auth/userManager';
 
 /**
  * Provides the same functionality as redux-thunk and augments the dispatch method with
@@ -41,15 +38,12 @@ export function getStore(reducers, history, intialState, enhancer = (a) => a) {
         thunkWithDispatchAction,
         promise,
         ...(DEBUG ? [logger] : []),
-        routerMiddleware(history),
-        createOidcMiddleware(userManager, () => true, false, '/auth/callback')
+        routerMiddleware(history)
     ];
 
-    const store = createStore(reducer, intialState, compose(
+    return createStore(reducer, intialState, compose(
         applyMiddleware(...middleware),
         devToolsExtension,
         enhancer,
     ));
-
-    return store;
 }

@@ -8,7 +8,6 @@ import type { Breakout } from "metabase/meta/types/Query";
 import type { TableMetadata, FieldOptions } from "metabase/meta/types/Metadata";
 
 type Props = {
-    maxHeight?: number,
     breakout?: Breakout,
     tableMetadata: TableMetadata,
     fieldOptions: FieldOptions,
@@ -22,13 +21,11 @@ const BreakoutPopover = (
         tableMetadata,
         fieldOptions,
         onCommitBreakout,
-        onClose,
-        maxHeight
+        onClose
     }: Props
 ) => (
     <FieldList
         className="text-green"
-        maxHeight={maxHeight}
         tableMetadata={tableMetadata}
         field={breakout}
         fieldOptions={fieldOptions}

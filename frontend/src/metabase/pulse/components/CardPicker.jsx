@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
-import { t } from 'c-3po';
 
 import Icon from "metabase/components/Icon.jsx";
 import Popover from "metabase/components/Popover.jsx";
@@ -59,11 +58,11 @@ export default class CardPicker extends Component {
         let error;
         try {
             if (Query.isBareRows(card.dataset_query.query)) {
-                error = t`Raw data cannot be included in pulses`;
+                error = "Raw data cannot be included in pulses";
             }
         } catch (e) {}
         if (card.display === "pin_map" || card.display === "state" || card.display === "country") {
-            error = t`Maps cannot be included in pulses`;
+            error = "Maps cannot be included in pulses";
         }
 
         if (error) {
@@ -105,7 +104,7 @@ export default class CardPicker extends Component {
             .sortBy("name")
             // add "Everything else" as the last option for cards without a
             // collection
-            .concat([{ id: null, name: t`Everything else`}])
+            .concat([{ id: null, name: "Everything else"}])
             .value();
 
         let visibleCardList;
@@ -129,7 +128,7 @@ export default class CardPicker extends Component {
                 <input
                     ref="input"
                     className="input no-focus full text-bold"
-                    placeholder={t`Type a question name to filter`}
+                    placeholder="Type a question name to filter"
                     value={this.inputValue}
                     onFocus={this.onInputFocus}
                     onBlur={this.onInputBlur}

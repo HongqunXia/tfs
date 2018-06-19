@@ -8,7 +8,7 @@ import type { FieldId } from "./types/Field";
 import type { TemplateTag } from "./types/Query";
 import type { Card } from "./types/Card";
 import type { ParameterOption, Parameter, ParameterType, ParameterMappingUIOption, DimensionTarget, VariableTarget } from "./types/Parameter";
-import { t } from 'c-3po';
+
 import { getTemplateTags } from "./Card";
 
 import { slugify, stripId } from "metabase/lib/formatting";
@@ -21,58 +21,58 @@ import _ from "underscore";
 export const PARAMETER_OPTIONS: Array<ParameterOption> = [
     {
         type: "date/month-year",
-        name: t`Month and Year`,
-        description: t`Like January, 2016`
+        name: "Month and Year",
+        description: "Like January, 2016"
     },
     {
         type: "date/quarter-year",
-        name: t`Quarter and Year`,
-        description: t`Like Q1, 2016`
+        name: "Quarter and Year",
+        description: "Like Q1, 2016"
     },
     {
         type: "date/single",
-        name: t`Single Date`,
-        description: t`Like January 31, 2016`
+        name: "Single Date",
+        description: "Like January 31, 2016"
     },
     {
         type: "date/range",
-        name: t`Date Range`,
-        description: t`Like December 25, 2015 - February 14, 2016`
+        name: "Date Range",
+        description: "Like December 25, 2015 - February 14, 2016"
     },
     {
         type: "date/relative",
-        name: t`Relative Date`,
-        description: t`Like "the last 7 days" or "this month"`
+        name: "Relative Date",
+        description: "Like \"the last 7 days\" or \"this month\""
     },
     {
         type: "date/all-options",
-        name: t`Date Filter`,
-        menuName: t`All Options`,
-        description: t`Contains all of the above`
+        name: "Date Filter",
+        menuName: "All Options",
+        description: "Contains all of the above"
     },
     {
         type: "location/city",
-        name: t`City`
+        name: "City"
     },
     {
         type: "location/state",
-        name: t`State`
+        name: "State"
     },
     {
         type: "location/zip_code",
-        name: t`ZIP or Postal Code`
+        name: "ZIP or Postal Code"
     },
     {
         type: "location/country",
-        name: t`Country`
+        name: "Country"
     },
     {
         type: "id",
-        name: t`ID`
+        name: "ID"
     },
     {
         type: "category",
-        name: t`Category`
+        name: "Category"
     },
 ];
 
@@ -84,10 +84,10 @@ export type ParameterSection = {
 };
 
 export const PARAMETER_SECTIONS: Array<ParameterSection> = [
-    { id: "date",     name: t`Time`,             description: t`Date range, relative date, time of day, etc.`, options: [] },
-    { id: "location", name: t`Location`,         description: t`City, State, Country, ZIP code.`, options: [] },
-    { id: "id",       name: t`ID`,               description: t`User ID, product ID, event ID, etc.`, options: [] },
-    { id: "category", name: t`Other Categories`, description: t`Category, Type, Model, Rating, etc.`, options: [] },
+    { id: "date",     name: "Time",             description: "Date range, relative date, time of day, etc.", options: [] },
+    { id: "location", name: "Location",         description: "City, State, Country, ZIP code.", options: [] },
+    { id: "id",       name: "ID",               description: "User ID, product ID, event ID, etc.", options: [] },
+    { id: "category", name: "Other Categories", description: "Category, Type, Model, Rating, etc.", options: [] },
 ];
 
 for (const option of PARAMETER_OPTIONS) {

@@ -4,7 +4,9 @@
              [database :refer [Database]]
              [metric :as metric :refer :all]
              [table :refer [Table]]]
-            [metabase.test.data :refer :all]
+            [metabase.test
+             [data :refer :all]
+             [util :as tu]]
             [metabase.test.data.users :refer :all]
             [metabase.util :as u]
             [toucan.util.test :as tt]))
@@ -145,7 +147,9 @@
 
 ;; ## Metric Revisions
 
-;; #'metric/serialize-metric
+(tu/resolve-private-vars metabase.models.metric serialize-metric diff-metrics)
+
+;; serialize-metric
 (expect
   (merge metric-defaults
          {:id          true
@@ -160,11 +164,11 @@
                   Metric   [metric         {:table_id   table-id
                                             :definition {:aggregation ["count"]
                                                          :filter      ["AND" [">" 4 "2014-10-19"]]}}]]
-    (-> (#'metric/serialize-metric Metric (:id metric) metric)
+    (-> (serialize-metric Metric (:id metric) metric)
         (update :id boolean)
         (update :table_id boolean))))
 
-;; #'metric/diff-metrics
+;; diff-metrics
 
 (expect
   {:definition  {:before {:filter ["AND" [">" 4 "2014-10-19"]]}
@@ -177,45 +181,45 @@
                   Table    [{table-id :id} {:db_id database-id}]
                   Metric   [metric         {:table_id   table-id
                                             :definition {:filter ["AND" [">" 4 "2014-10-19"]]}}]]
-    (#'metric/diff-metrics Metric metric (assoc metric
-                                           :name        "Something else"
-                                           :description "BBB"
-                                           :definition  {:filter ["AND" ["BETWEEN" 4 "2014-07-01" "2014-10-19"]]}))))
+    (diff-metrics Metric metric (assoc metric
+                                       :name        "Something else"
+                                       :description "BBB"
+                                       :definition  {:filter ["AND" ["BETWEEN" 4 "2014-07-01" "2014-10-19"]]}))))
 
 ;; test case where definition doesn't change
 (expect
   {:name {:before "A"
           :after  "B"}}
-  (#'metric/diff-metrics Metric
-                         {:name        "A"
-                          :description "Unchanged"
-                          :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}
-                         {:name        "B"
-                          :description "Unchanged"
-                          :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
+  (diff-metrics Metric
+                {:name        "A"
+                 :description "Unchanged"
+                 :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}
+                {:name        "B"
+                 :description "Unchanged"
+                 :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
 
 ;; first version, so comparing against nil
 (expect
   {:name        {:after  "A"}
    :description {:after "Unchanged"}
    :definition  {:after {:filter ["AND" [">" 4 "2014-10-19"]]}}}
-  (#'metric/diff-metrics Metric
-                         nil
-                         {:name        "A"
-                          :description "Unchanged"
-                          :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
+  (diff-metrics Metric
+                nil
+                {:name        "A"
+                 :description "Unchanged"
+                 :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
 
 ;; removals only
 (expect
   {:definition  {:before {:filter ["AND" [">" 4 "2014-10-19"] ["=" 5 "yes"]]}
                  :after  {:filter ["AND" [">" 4 "2014-10-19"]]}}}
-  (#'metric/diff-metrics Metric
-                         {:name        "A"
-                          :description "Unchanged"
-                          :definition  {:filter ["AND" [">" 4 "2014-10-19"] ["=" 5 "yes"]]}}
-                         {:name        "A"
-                          :description "Unchanged"
-                          :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
+  (diff-metrics Metric
+                {:name        "A"
+                 :description "Unchanged"
+                 :definition  {:filter ["AND" [">" 4 "2014-10-19"] ["=" 5 "yes"]]}}
+                {:name        "A"
+                 :description "Unchanged"
+                 :definition  {:filter ["AND" [">" 4 "2014-10-19"]]}}))
 
 
 

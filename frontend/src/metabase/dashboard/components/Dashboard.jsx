@@ -39,17 +39,16 @@ type Props = {
 
     addCardOnLoad:          DashboardId,
 
-    initialize:                 () => Promise<void>,
-    addCardToDashboard:         ({ dashId: DashCardId, cardId: CardId }) => void,
-    addTextDashCardToDashboard: ({ dashId: DashCardId }) => void,
-    archiveDashboard:           (dashboardId: DashboardId) => void,
-    fetchCards:                 (filterMode?: string) => void,
-    fetchDashboard:             (dashboardId: DashboardId, queryParams: ?QueryParams) => void,
-    fetchRevisions:             ({ entity: string, id: number }) => void,
-    revertToRevision:           ({ entity: string, id: number, revision_id: RevisionId }) => void,
-    saveDashboardAndCards:      () => Promise<void>,
-    setDashboardAttributes:     ({ [attribute: string]: any }) => void,
-    fetchDashboardCardData:     (options: { reload: bool, clear: bool }) => Promise<void>,
+    initialize:             () => Promise<void>,
+    addCardToDashboard:     ({ dashId: DashCardId, cardId: CardId }) => void,
+    archiveDashboard:        (dashboardId: DashboardId) => void,
+    fetchCards:             (filterMode?: string) => void,
+    fetchDashboard:         (dashboardId: DashboardId, queryParams: ?QueryParams) => void,
+    fetchRevisions:         ({ entity: string, id: number }) => void,
+    revertToRevision:       ({ entity: string, id: number, revision_id: RevisionId }) => void,
+    saveDashboardAndCards:  () => Promise<void>,
+    setDashboardAttributes: ({ [attribute: string]: any }) => void,
+    fetchDashboardCardData: (options: { reload: bool, clear: bool }) => Promise<void>,
 
     setEditingParameter:    (parameterId: ?ParameterId) => void,
     setEditingDashboard:    (isEditing: boolean) => void,
@@ -221,7 +220,7 @@ export default class Dashboard extends Component {
                                 <div className="absolute z1 top bottom left right flex flex-column layout-centered">
                                     <span className="QuestionCircle">?</span>
                                     <div className="text-normal mt3 mb1">This dashboard is looking empty.</div>
-                                    <div className="text-normal text-grey-2">Add a query to start making it useful!</div>
+                                    <div className="text-normal text-grey-2">Add a question to start making it useful!</div>
                                 </div>
                                 :
                                 <DashboardGrid

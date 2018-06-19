@@ -1,14 +1,13 @@
 (ns metabase.api.activity-test
   "Tests for /api/activity endpoints."
   (:require [expectations :refer :all]
-            [metabase.api.activity :as activity-api]
             [metabase.models
              [activity :refer [Activity]]
              [card :refer [Card]]
              [dashboard :refer [Dashboard]]
              [view-log :refer [ViewLog]]]
             [metabase.test.data.users :refer :all]
-            [metabase.test.util :as tu :refer [match-$]]
+            [metabase.test.util :as tu :refer [match-$ resolve-private-vars]]
             [metabase.util :as u]
             [toucan.db :as db]
             [toucan.util.test :as tt]))
@@ -170,7 +169,9 @@
 
 ;;; activities->referenced-objects, referenced-objects->existing-objects, add-model-exists-info
 
-(def ^:private fake-activities
+(resolve-private-vars metabase.api.activity activities->referenced-objects referenced-objects->existing-objects add-model-exists-info)
+
+(def ^:private ^:const fake-activities
   [{:model "dashboard", :model_id  43, :topic :dashboard-create,    :details {}}
    {:model "dashboard", :model_id  42, :topic :dashboard-create,    :details {}}
    {:model "card",      :model_id 114, :topic :card-create,         :details {}}
@@ -189,13 +190,13 @@
   {"dashboard" #{41 43 42}
    "card"      #{113 108 109 111 112 114}
    "user"      #{90}}
-  (#'activity-api/activities->referenced-objects fake-activities))
+  (activities->referenced-objects fake-activities))
 
 
 (tt/expect-with-temp [Dashboard [{dashboard-id :id}]]
   {"dashboard" #{dashboard-id}, "card" nil}
-  (#'activity-api/referenced-objects->existing-objects {"dashboard" #{dashboard-id 0}
-                                                        "card"      #{0}}))
+  (referenced-objects->existing-objects {"dashboard" #{dashboard-id 0}
+                                         "card"      #{0}}))
 
 
 (tt/expect-with-temp [Dashboard [{dashboard-id :id}]
@@ -204,7 +205,7 @@
    {:model "card",      :model_id 0,            :model_exists false}
    {:model "dashboard", :model_id 0,            :model_exists false, :topic :dashboard-remove-cards, :details {:dashcards [{:card_id card-id, :exists true}
                                                                                                                            {:card_id 0,       :exists false}]}}]
-  (#'activity-api/add-model-exists-info [{:model "dashboard", :model_id dashboard-id}
-                                         {:model "card",      :model_id 0}
-                                         {:model "dashboard", :model_id 0, :topic :dashboard-remove-cards, :details {:dashcards [{:card_id card-id}
-                                                                                                                                 {:card_id 0}]}}]))
+  (add-model-exists-info [{:model "dashboard", :model_id dashboard-id}
+                          {:model "card",      :model_id 0}
+                          {:model "dashboard", :model_id 0, :topic :dashboard-remove-cards, :details {:dashcards [{:card_id card-id}
+                                                                                                                  {:card_id 0}]}}]))

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { reduxForm } from "redux-form";
 import { push } from "react-router-redux";
-import { t } from 'c-3po';
+
 import S from "metabase/reference/Reference.css";
 
 import List from "metabase/components/List.jsx";
@@ -39,7 +39,7 @@ import * as actions from 'metabase/reference/reference';
 const interestingQuestions = (database, table, field, metadata) => {
     return [
         {
-            text: t`Number of ${table.display_name} grouped by ${field.display_name}`,
+            text: `Number of ${table.display_name} grouped by ${field.display_name}`,
             icon: { name: "bar", scale: 1, viewBox: "8 8 16 16" },
             link: getQuestionUrl({
                 dbId: database.id,
@@ -51,7 +51,7 @@ const interestingQuestions = (database, table, field, metadata) => {
             })
         },
         {
-            text: t`Number of ${table.display_name} grouped by ${field.display_name}`,
+            text: `Number of ${table.display_name} grouped by ${field.display_name}`,
             icon: { name: "pie", scale: 1, viewBox: "8 8 16 16" },
             link: getQuestionUrl({
                 dbId: database.id,
@@ -63,7 +63,7 @@ const interestingQuestions = (database, table, field, metadata) => {
             })
         },
         {
-            text: t`All distinct values of ${field.display_name}`,
+            text: `All distinct values of ${field.display_name}`,
             icon: "table2",
             link: getQuestionUrl({
                 dbId: database.id,
@@ -192,9 +192,9 @@ export default class FieldDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="description"
-                                    name={t`Description`}
+                                    name="Description"
                                     description={entity.description}
-                                    placeholder={t`No description yet`}
+                                    placeholder="No description yet"
                                     isEditing={isEditing}
                                     field={description}
                                 />
@@ -203,7 +203,7 @@ export default class FieldDetail extends Component {
                                 <li className="relative">
                                     <Detail
                                         id="name"
-                                        name={t`Actual name in database`}
+                                        name="Actual name in database"
                                         description={entity.name}
                                         subtitleClass={S.tableActualName}
                                     />
@@ -212,9 +212,9 @@ export default class FieldDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="points_of_interest"
-                                    name={t`Why this field is interesting`}
+                                    name={`Why this field is interesting`}
                                     description={entity.points_of_interest}
-                                    placeholder={t`Nothing interesting yet`}
+                                    placeholder="Nothing interesting yet"
                                     isEditing={isEditing}
                                     field={points_of_interest}
                                     />
@@ -222,9 +222,9 @@ export default class FieldDetail extends Component {
                             <li className="relative">
                                 <Detail
                                     id="caveats"
-                                    name={t`Things to be aware of about this field`}
+                                    name={`Things to be aware of about this field`}
                                     description={entity.caveats}
-                                    placeholder={t`Nothing to be aware of yet`}
+                                    placeholder="Nothing to be aware of yet"
                                     isEditing={isEditing}
                                     field={caveats}
                                 />
@@ -235,7 +235,7 @@ export default class FieldDetail extends Component {
                                 <li className="relative">
                                     <Detail
                                         id="base_type"
-                                        name={t`Data type`}
+                                        name={`Data type`}
                                         description={entity.base_type}
                                     />
                                 </li>

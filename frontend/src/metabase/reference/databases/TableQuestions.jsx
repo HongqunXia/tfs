@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
-import { t } from 'c-3po';
+
 import visualizations from "metabase/visualizations";
 import { isQueryable } from "metabase/lib/table";
 import * as Urls from "metabase/lib/urls";
@@ -34,9 +34,9 @@ import * as metadataActions from "metabase/redux/metadata";
 
 const emptyStateData = (table) =>  {
     return {
-        message: t`Queries about this table will appear here as they're added`,
+        message: "Questions about this table will appear here as they're added",
         icon: "all",
-        action: t`Ask a question`,
+        action: "Ask a question",
         link: getQuestionUrl({
             dbId: table.db_id,
             tableId: table.id,
@@ -78,7 +78,7 @@ export default class TableQuestions extends Component {
         return (
             <div style={style} className="full">
                 <ReferenceHeader 
-                    name={t`Queries about ${this.props.table.display_name}`}
+                    name={`Questions about ${this.props.table.display_name}`}
                     type="questions"
                     headerIcon="table2"
                 />
@@ -94,7 +94,7 @@ export default class TableQuestions extends Component {
                                                     id={entity.id}
                                                     index={index}
                                                     name={entity.display_name || entity.name}
-                                                    description={ t`Created ${moment(entity.created_at).fromNow()} by ${entity.creator.common_name}` }
+                                                    description={ `Created ${moment(entity.created_at).fromNow()} by ${entity.creator.common_name}` }
                                                     url={ Urls.question(entity.id) }
                                                     icon={ visualizations.get(entity.display).iconName }
                                                 />

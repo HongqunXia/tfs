@@ -1,14 +1,14 @@
 :root {
   --default-button-border-radius: 4px;
-  --default-button-border-color: #BDC3C7;
+  --default-button-border-color: #b9b9b9;
   --default-button-background-color: #fff;
 
-  --primary-button-border-color: #0088CE;
-  --primary-button-bg-color: #0088CE;
-  --warning-button-border-color: #E74C3C;
-  --warning-button-bg-color: #E74C3C;
-  --danger-button-bg-color: #E74C3C;
-  --selected-button-bg-color: #FFFFFF;
+  --primary-button-border-color: #509EE3;
+  --primary-button-bg-color: #509EE3;
+  --warning-button-border-color: #EF8C8C;
+  --warning-button-bg-color: #EF8C8C;
+  --danger-button-bg-color: #EF8C8C;
+  --selected-button-bg-color: #F4F6F8;
 
   --success-button-color: var(--success-color);
 }
@@ -18,7 +18,7 @@
   box-sizing: border-box;
   text-decoration: none;
   padding: 0.5rem 0.75rem;
-  background: #FFFFFF;
+  background: #FBFCFD;
   border: 1px solid #ddd;
   color: var(--default-font-color);
   cursor: pointer;

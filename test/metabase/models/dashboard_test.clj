@@ -2,7 +2,7 @@
   (:require [expectations :refer :all]
             [metabase.models
              [card :refer [Card]]
-             [dashboard :refer :all :as dashboard]
+             [dashboard :refer :all]
              [dashboard-card :as dashboard-card :refer [DashboardCard]]
              [dashboard-card-series :refer [DashboardCardSeries]]]
             [metabase.test
@@ -103,7 +103,9 @@
                      :series  [3 4 5]}]}))
 
 
-;;; #'dashboard/revert-dashboard!
+;;; revert-dashboard!
+
+(tu/resolve-private-vars metabase.models.dashboard revert-dashboard!)
 
 (expect
   [{:name         "Test Dashboard"
@@ -136,9 +138,9 @@
                   DashboardCardSeries [_                                    {:dashboardcard_id dashcard-id, :card_id series-id-2, :position 1}]]
     (let [check-ids            (fn [[{:keys [id card_id series] :as card}]]
                                  [(assoc card
-                                    :id      (= dashcard-id id)
-                                    :card_id (= card-id card_id)
-                                    :series  (= [series-id-1 series-id-2] series))])
+                                         :id      (= dashcard-id id)
+                                         :card_id (= card-id card_id)
+                                         :series  (= [series-id-1 series-id-2] series))])
           serialized-dashboard (serialize-dashboard dashboard)]
       ;; delete the dashcard and modify the dash attributes
       (dashboard-card/delete-dashboard-card! dashboard-card (user->id :rasta))
@@ -148,7 +150,7 @@
       ;; capture our updated dashboard state
       (let [serialized-dashboard2 (serialize-dashboard (Dashboard dashboard-id))]
         ;; now do the reversion
-        (#'dashboard/revert-dashboard! dashboard-id (user->id :crowberto) serialized-dashboard)
+        (revert-dashboard! dashboard-id (user->id :crowberto) serialized-dashboard)
         ;; final output is original-state, updated-state, reverted-state
         [(update serialized-dashboard :cards check-ids)
          serialized-dashboard2

@@ -129,8 +129,8 @@
   (->> ((user->client :rasta) :get 200 "table")
        (filter #(= (:db_id %) (data/id))) ; prevent stray tables from affecting unit test results
        (map #(dissoc %
-                     :raw_table_id :db :created_at :updated_at :schema :entity_name :description :entity_type
-                     :visibility_type :caveats :points_of_interest :show_in_getting_started :db_id :active))
+                     :raw_table_id :db :created_at :updated_at :schema :entity_name :description :entity_type :visibility_type
+                     :caveats :points_of_interest :show_in_getting_started :db_id :active))
        set))
 
 
@@ -173,20 +173,18 @@
             :display_name "Categories"
             :fields       [(assoc (field-details (Field (data/id :categories :id)))
                              :table_id     (data/id :categories)
-                             :special_type  "type/PK"
-                             :name          "ID"
-                             :display_name  "ID"
-                             :database_type "BIGINT"
-                             :base_type     "type/BigInteger")
+                             :special_type "type/PK"
+                             :name         "ID"
+                             :display_name "ID"
+                             :base_type    "type/BigInteger")
                            (assoc (field-details (Field (data/id :categories :name)))
-                             :table_id                 (data/id :categories)
-                             :special_type             "type/Name"
-                             :name                     "NAME"
-                             :display_name             "Name"
-                             :database_type            "VARCHAR"
-                             :base_type                "type/Text"
-                             :values                   data/venue-categories
-                             :dimension_options        []
+                             :table_id     (data/id :categories)
+                             :special_type "type/Name"
+                             :name         "NAME"
+                             :display_name "Name"
+                             :base_type    "type/Text"
+                             :values       data/venue-categories
+                             :dimension_options []
                              :default_dimension_option nil)]
             :rows         75
             :updated_at   $
@@ -197,8 +195,8 @@
 
 
 (def ^:private user-last-login-date-strs
-  "In an effort to be really annoying, the date strings returned by the API are different on Circle than they are
-   locally. Generate strings like '2014-01-01' at runtime so we get matching values."
+  "In an effort to be really annoying, the date strings returned by the API are different on Circle than they are locally.
+   Generate strings like '2014-01-01' at runtime so we get matching values."
   (let [format-inst (fn [^java.util.Date inst]
                       (format "%d-%02d-%02d"
                               (+ (.getYear inst) 1900)
@@ -214,8 +212,7 @@
   (defs/field-values defs/test-data-map "users" "name"))
 
 ;;; GET api/table/:id/query_metadata?include_sensitive_fields
-;; Make sure that getting the User table *does* include info about the password field, but not actual values
-;; themselves
+;;; Make sure that getting the User table *does* include info about the password field, but not actual values themselves
 (expect
   (merge (query-metadata-defaults)
          (match-$ (Table (data/id :users))
@@ -227,35 +224,32 @@
                              :table_id        (data/id :users)
                              :name            "ID"
                              :display_name    "ID"
-                             :database_type   "BIGINT"
                              :base_type       "type/BigInteger"
                              :visibility_type "normal")
                            (assoc (field-details (Field (data/id :users :last_login)))
-                             :table_id                 (data/id :users)
-                             :name                     "LAST_LOGIN"
-                             :display_name             "Last Login"
-                             :database_type            "TIMESTAMP"
-                             :base_type                "type/DateTime"
-                             :visibility_type          "normal"
+                             :table_id        (data/id :users)
+                             :name            "LAST_LOGIN"
+                             :display_name    "Last Login"
+                             :base_type       "type/DateTime"
+                             :visibility_type "normal"
                              :dimension_options        (var-get #'table-api/datetime-dimension-indexes)
-                             :default_dimension_option (var-get #'table-api/date-default-index))
+                             :default_dimension_option (var-get #'table-api/date-default-index)
+                             )
                            (assoc (field-details (Field (data/id :users :name)))
-                             :special_type             "type/Name"
-                             :table_id                 (data/id :users)
-                             :name                     "NAME"
-                             :display_name             "Name"
-                             :database_type            "VARCHAR"
-                             :base_type                "type/Text"
-                             :visibility_type          "normal"
-                             :values                   (map vector (sort user-full-names))
-                             :dimension_options        []
+                             :special_type    "type/Name"
+                             :table_id        (data/id :users)
+                             :name            "NAME"
+                             :display_name    "Name"
+                             :base_type       "type/Text"
+                             :visibility_type "normal"
+                             :values          (map vector (sort user-full-names))
+                             :dimension_options []
                              :default_dimension_option nil)
                            (assoc (field-details (Field :table_id (data/id :users), :name "PASSWORD"))
                              :special_type    "type/Category"
                              :table_id        (data/id :users)
                              :name            "PASSWORD"
                              :display_name    "Password"
-                             :database_type   "VARCHAR"
                              :base_type       "type/Text"
                              :visibility_type "sensitive")]
             :rows         15
@@ -274,42 +268,39 @@
             :name         "USERS"
             :display_name "Users"
             :fields       [(assoc (field-details (Field (data/id :users :id)))
-                             :table_id      (data/id :users)
-                             :special_type  "type/PK"
-                             :name          "ID"
-                             :display_name  "ID"
-                             :database_type "BIGINT"
-                             :base_type     "type/BigInteger")
+                             :table_id     (data/id :users)
+                             :special_type "type/PK"
+                             :name         "ID"
+                             :display_name "ID"
+                             :base_type    "type/BigInteger")
                            (assoc (field-details (Field (data/id :users :last_login)))
                              :table_id                 (data/id :users)
                              :name                     "LAST_LOGIN"
                              :display_name             "Last Login"
-                             :database_type            "TIMESTAMP"
                              :base_type                "type/DateTime"
                              :dimension_options        (var-get #'table-api/datetime-dimension-indexes)
                              :default_dimension_option (var-get #'table-api/date-default-index))
                            (assoc (field-details (Field (data/id :users :name)))
-                             :table_id      (data/id :users)
-                             :special_type  "type/Name"
-                             :name          "NAME"
-                             :display_name  "Name"
-                             :database_type "VARCHAR"
-                             :base_type     "type/Text"
-                             :values        [["Broen Olujimi"]
-                                             ["Conchúr Tihomir"]
-                                             ["Dwight Gresham"]
-                                             ["Felipinho Asklepios"]
-                                             ["Frans Hevel"]
-                                             ["Kaneonuskatew Eiran"]
-                                             ["Kfir Caj"]
-                                             ["Nils Gotam"]
-                                             ["Plato Yeshua"]
-                                             ["Quentin Sören"]
-                                             ["Rüstem Hebel"]
-                                             ["Shad Ferdynand"]
-                                             ["Simcha Yan"]
-                                             ["Spiros Teofil"]
-                                             ["Szymon Theutrich"]])]
+                             :table_id     (data/id :users)
+                             :special_type "type/Name"
+                             :name         "NAME"
+                             :display_name "Name"
+                             :base_type    "type/Text"
+                             :values       [["Broen Olujimi"]
+                                            ["Conchúr Tihomir"]
+                                            ["Dwight Gresham"]
+                                            ["Felipinho Asklepios"]
+                                            ["Frans Hevel"]
+                                            ["Kaneonuskatew Eiran"]
+                                            ["Kfir Caj"]
+                                            ["Nils Gotam"]
+                                            ["Plato Yeshua"]
+                                            ["Quentin Sören"]
+                                            ["Rüstem Hebel"]
+                                            ["Shad Ferdynand"]
+                                            ["Simcha Yan"]
+                                            ["Spiros Teofil"]
+                                            ["Szymon Theutrich"]])]
             :rows         15
             :updated_at   $
             :id           (data/id :users)
@@ -392,40 +383,38 @@
       :relationship   "Mt1"
       :origin         (-> (fk-field-details checkins-user-field)
                           (dissoc :target :dimensions :values)
-                          (assoc :table_id      (data/id :checkins)
-                                 :name          "USER_ID"
-                                 :display_name  "User ID"
-                                 :database_type "INTEGER"
-                                 :base_type     "type/Integer"
-                                 :special_type  "type/FK"
-                                 :table         (merge (dissoc (table-defaults) :segments :field_values :metrics)
-                                                       (match-$ (Table (data/id :checkins))
-                                                         {:schema       "PUBLIC"
-                                                          :name         "CHECKINS"
-                                                          :display_name "Checkins"
-                                                          :rows         1000
-                                                          :updated_at   $
-                                                          :id           $
-                                                          :raw_table_id $
-                                                          :created_at   $}))))
+                          (assoc :table_id     (data/id :checkins)
+                                 :name         "USER_ID"
+                                 :display_name "User ID"
+                                 :base_type    "type/Integer"
+                                 :special_type "type/FK"
+                                 :table        (merge (dissoc (table-defaults) :segments :field_values :metrics)
+                                                      (match-$ (Table (data/id :checkins))
+                                                        {:schema       "PUBLIC"
+                                                         :name         "CHECKINS"
+                                                         :display_name "Checkins"
+                                                         :rows         1000
+                                                         :updated_at   $
+                                                         :id           $
+                                                         :raw_table_id $
+                                                         :created_at   $}))))
       :destination    (-> (fk-field-details users-id-field)
                           (dissoc :target :dimensions :values)
-                          (assoc :table_id      (data/id :users)
-                                 :name          "ID"
-                                 :display_name  "ID"
-                                 :database_type "BIGINT"
-                                 :base_type     "type/BigInteger"
-                                 :special_type  "type/PK"
-                                 :table         (merge (dissoc (table-defaults) :db :segments :field_values :metrics)
-                                                       (match-$ (Table (data/id :users))
-                                                         {:schema       "PUBLIC"
-                                                          :name         "USERS"
-                                                          :display_name "Users"
-                                                          :rows         15
-                                                          :updated_at   $
-                                                          :id           $
-                                                          :raw_table_id $
-                                                          :created_at   $}))))}])
+                          (assoc :table_id     (data/id :users)
+                                 :name         "ID"
+                                 :display_name "ID"
+                                 :base_type    "type/BigInteger"
+                                 :special_type "type/PK"
+                                 :table        (merge (dissoc (table-defaults) :db :segments :field_values :metrics)
+                                                      (match-$ (Table (data/id :users))
+                                                        {:schema       "PUBLIC"
+                                                         :name         "USERS"
+                                                         :display_name "Users"
+                                                         :rows         15
+                                                         :updated_at   $
+                                                         :id           $
+                                                         :raw_table_id $
+                                                         :created_at   $}))))}])
   ((user->client :rasta) :get 200 (format "table/%d/fks" (data/id :users))))
 
 ;; Make sure metadata for 'virtual' tables comes back as expected from GET /api/table/:id/query_metadata
@@ -473,11 +462,16 @@
                                 dim))))))
 
 (defn- category-id-special-type
-  "Field values will only be returned when the field's special type is set to type/Category. This function will change
-  that for `category_id`, then invoke `f` and roll it back afterwards"
+  "Field values will only be returned when the field's special type is
+  set to type/Category. This function will change that for
+  category_id, then invoke `F` and roll it back afterwards"
   [special-type f]
-  (tu/with-temp-vals-in-db Field (data/id :venues :category_id) {:special_type special-type}
-    (f)))
+  (let [original-special-type (:special_type (Field (data/id :venues :category_id)))]
+    (try
+      (db/update! Field (data/id :venues :category_id) {:special_type special-type})
+      (f)
+      (finally
+        (db/update! Field (data/id :venues :category_id) {:special_type original-special-type})))))
 
 ;; ## GET /api/table/:id/query_metadata
 ;; Ensure internal remapped dimensions and human_readable_values are returned
@@ -554,15 +548,18 @@
 ;; Numeric fields without min/max values should not have binning strategies
 (expect
   []
-  (let [fingerprint      (db/select-one-field :fingerprint Field {:id (data/id :venues :latitude)})
-        temp-fingerprint (-> fingerprint
-                             (assoc-in [:type :type/Number :max] nil)
-                             (assoc-in [:type :type/Number :min] nil))]
-    (tu/with-temp-vals-in-db Field (data/id :venues :latitude) {:fingerprint temp-fingerprint}
+  (let [lat-field-id (data/id :venues :latitude)
+        fingerprint  (:fingerprint (Field lat-field-id))]
+    (try
+      (db/update! Field (data/id :venues :latitude) :fingerprint (-> fingerprint
+                                                                     (assoc-in [:type :type/Number :max] nil)
+                                                                     (assoc-in [:type :type/Number :min] nil)))
       (-> ((user->client :rasta) :get 200 (format "table/%d/query_metadata" (data/id :categories)))
           (get-in [:fields])
           first
-          :dimension_options))))
+          :dimension_options)
+      (finally
+        (db/update! Field lat-field-id :fingerprint fingerprint)))))
 
 (defn- dimension-options-for-field [response field-name]
   (let [formatted-field-name (data/format-name field-name)]
@@ -593,9 +590,15 @@
   (if (data/binning-supported?)
     #{nil "num-bins" "default"}
     #{})
-  (tu/with-temp-vals-in-db Field (data/id :venues :price) {:special_type nil}
-    (let [response ((user->client :rasta) :get 200 (format "table/%d/query_metadata" (data/id :venues)))]
-      (extract-dimension-options response "price"))))
+  (let [{:keys [special_type]} (Field (data/id :venues :price))]
+    (try
+      (db/update! Field (data/id :venues :price) :special_type nil)
+
+      (let [response ((user->client :rasta) :get 200 (format "table/%d/query_metadata" (data/id :venues)))]
+        (extract-dimension-options response "price"))
+
+      (finally
+        (db/update! Field (data/id :venues :price) :special_type special_type)))))
 
 ;; Ensure unix timestamps show date binning options, not numeric binning options
 (expect

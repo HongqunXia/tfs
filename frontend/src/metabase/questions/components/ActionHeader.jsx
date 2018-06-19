@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import S from "./ActionHeader.css";
-import { t } from 'c-3po';
+
 import StackedCheckBox from "metabase/components/StackedCheckBox.jsx";
 import Icon from "metabase/components/Icon.jsx";
 import Tooltip from "metabase/components/Tooltip.jsx";
@@ -13,7 +13,7 @@ import LabelPopover from "../containers/LabelPopover.jsx";
 
 const ActionHeader = ({ visibleCount, selectedCount, allAreSelected, sectionIsArchive, setAllSelected, setArchived, labels }) =>
     <div className={S.actionHeader}>
-        <Tooltip tooltip={t`Select all ${visibleCount}`} isEnabled={!allAreSelected}>
+        <Tooltip tooltip={"Select all " + visibleCount} isEnabled={!allAreSelected}>
             <span className="ml1">
                 <StackedCheckBox
                     checked={allAreSelected}
@@ -24,7 +24,7 @@ const ActionHeader = ({ visibleCount, selectedCount, allAreSelected, sectionIsAr
             </span>
         </Tooltip>
         <span className={S.selectedCount}>
-            {t`${selectedCount} selected`}
+            {selectedCount} selected
         </span>
         <span className="flex align-center flex-align-right">
             { !sectionIsArchive && labels.length > 0 ?
@@ -32,7 +32,7 @@ const ActionHeader = ({ visibleCount, selectedCount, allAreSelected, sectionIsAr
                     triggerElement={
                         <span className={S.actionButton}>
                             <Icon name="label" />
-                            {t`Labels`}
+                            Labels
                             <Icon name="chevrondown" size={12} />
                         </span>
                     }
@@ -45,7 +45,7 @@ const ActionHeader = ({ visibleCount, selectedCount, allAreSelected, sectionIsAr
                 triggerElement={
                     <span className={S.actionButton} >
                         <Icon name="move" className="mr1" />
-                        {t`Move`}
+                        Move
                     </span>
                 }
             >
@@ -53,7 +53,7 @@ const ActionHeader = ({ visibleCount, selectedCount, allAreSelected, sectionIsAr
             </ModalWithTrigger>
             <span className={S.actionButton} onClick={() => setArchived(undefined, !sectionIsArchive, true)}>
                 <Icon name={ sectionIsArchive ? "unarchive" : "archive" }  className="mr1" />
-                { sectionIsArchive ? t`Unarchive` : t`Archive` }
+                { sectionIsArchive ? "Unarchive" : "Archive" }
             </span>
         </span>
     </div>

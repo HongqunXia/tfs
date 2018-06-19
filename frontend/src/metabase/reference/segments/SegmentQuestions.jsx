@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
-import { t } from 'c-3po';
+
 import visualizations from "metabase/visualizations";
 import { isQueryable } from "metabase/lib/table";
 import * as Urls from "metabase/lib/urls";
@@ -35,9 +35,9 @@ import * as metadataActions from "metabase/redux/metadata";
 
 const emptyStateData = (table, segment) =>{  
     return {
-        message: t`Queries about this segment will appear here as they're added`,
+        message: "Questions about this segment will appear here as they're added",
         icon: "all",
-        action: t`Ask a question`,
+        action: "Ask a question",
         link: getQuestionUrl({
             dbId: table && table.db_id,
             tableId: segment.table_id,
@@ -79,7 +79,7 @@ export default class SegmentQuestions extends Component {
         return (
             <div style={style} className="full">
                 <ReferenceHeader 
-                    name={t`Queries about ${this.props.segment.name}`}
+                    name={`Questions about ${this.props.segment.name}`}
                     type='questions'
                     headerIcon="segment"
                 />
@@ -95,7 +95,7 @@ export default class SegmentQuestions extends Component {
                                                     id={entity.id}
                                                     index={index}
                                                     name={entity.display_name || entity.name}
-                                                    description={ t`Created ${moment(entity.created_at).fromNow()} by ${entity.creator.common_name}` }
+                                                    description={ `Created ${moment(entity.created_at).fromNow()} by ${entity.creator.common_name}` }
                                                     url={ Urls.question(entity.id) }
                                                     icon={ visualizations.get(entity.display).iconName }
                                                 />

@@ -65,7 +65,7 @@ var MetabaseUtils = {
     },
 
     isJWT(string) {
-        return typeof string === "string" && /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(string);
+        return typeof string === "string" && /^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[A-Za-z0-9_-]+$/.test(string);
     },
 
     validEmail: function(email) {
@@ -83,7 +83,7 @@ var MetabaseUtils = {
         return JSON.parse(JSON.stringify(a));
     },
 
-    // this should correctly compare all version formats Softheon uses, e.x.
+    // this should correctly compare all version formats Metabase uses, e.x.
     // 0.0.9, 0.0.10-snapshot, 0.0.10-alpha1, 0.0.10-rc1, 0.0.10-rc2, 0.0.10-rc10
     // 0.0.10, 0.1.0, 0.2.0, 0.10.0, 1.1.0
     compareVersions: function(aVersion, bVersion) {

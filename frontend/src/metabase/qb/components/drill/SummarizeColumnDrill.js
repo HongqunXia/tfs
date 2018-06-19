@@ -5,7 +5,7 @@ import {
     getAggregator,
     isCompatibleAggregatorForField
 } from "metabase/lib/schema_metadata";
-import { t } from "c-3po";
+
 import type {
     ClickAction,
     ClickActionProps
@@ -14,23 +14,23 @@ import type {
 const AGGREGATIONS = {
     sum: {
         section: "sum",
-        title: t`Sum`
+        title: "Sum"
     },
     avg: {
         section: "averages",
-        title: t`Avg`
+        title: "Avg"
     },
     min: {
         section: "averages",
-        title: t`Min`
+        title: "Min"
     },
     max: {
         section: "averages",
-        title: t`Max`
+        title: "Max"
     },
     distinct: {
         section: "averages",
-        title: t`Distincts`
+        title: "Distincts"
     }
 };
 
