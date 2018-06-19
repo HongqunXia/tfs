@@ -1,7 +1,6 @@
 (ns metabase.api.session
   "/api/session endpoints"
-  (:require [clojure.string :as str]
-            [cemerick.friend.credentials :as creds]
+  (:require [cemerick.friend.credentials :as creds]
             [cheshire.core :as json]
             [clj-http.client :as http]
             [clojure.tools.logging :as log]
@@ -10,7 +9,6 @@
              [events :as events]
              [public-settings :as public-settings]
              [util :as u]]
-             
             [metabase.api.common :as api]
             [metabase.email.messages :as email]
             [metabase.integrations.ldap :as ldap]
@@ -23,9 +21,7 @@
              [schema :as su]]
             [schema.core :as s]
             [throttle.core :as throttle]
-            [buddy.sign.jwt :as jwt]
-            [toucan.db :as db]
-            [base64-clj.core :as base64]))
+            [toucan.db :as db]))
 
 (defn- create-session!
   "Generate a new `Session` for a given `User`. Returns the newly generated session ID."
@@ -38,7 +34,7 @@
       :user_id (:id user))
     (events/publish-event! :user-login {:user_id (:id user), :session_id <>, :first_login (not (boolean (:last_login user)))})))
 
-;;; ## API Endpointsldap-login
+;;; ## API Endpoints
 
 (def ^:private login-throttlers
   {:username   (throttle/make-throttler :username)
@@ -175,12 +171,6 @@
 (defsetting google-auth-client-id
   "Client ID for Google Auth SSO. If this is set, Google Auth is considered to be enabled.")
 
-(defsetting identity-server-uri
-  "Identity Server URI")
-
-(defsetting api-secret
-  "API Secret")
-
 (defsetting google-auth-auto-create-accounts-domain
   "When set, allow users to sign up on their own if their Google account email address is from this domain.")
 
@@ -192,34 +182,12 @@
       (when-not (= (:email_verified <>) "true")
         (throw (ex-info "Email is not verified." {:status-code 400}))))))
 
-(defn- determine-padding [^String input]
-  "Determines how much padding is needed"
-  (- 4 (mod (count input) 4))) 
-
-(defn- softheon-auth-token-info [^String token ^String access_token]
-  (let [{:keys [status body]} (http/post (str (identity-server-uri) "/connect/introspect") {:basic-auth (api-secret) :form-params {:token access_token} :content-type :x-www-form-urlencoded})]
-    (when-not (= status 200)
-      (throw (ex-info "Invalid Softheon Auth token." {:status-code 400})))
-    (u/prog1 (json/parse-string body keyword)
-    (when-not (= (:active <>) true)
-      (throw (ex-info "Access token is not active." {:status-code 400})))))
-  (let [[header payload signature] (str/split token #"\.")]
-    (def loopRange (determine-padding payload))       
-    (def paddedPayload payload)
-    (dotimes [i loopRange]
-        (def paddedPayload (str paddedPayload "=")))
-    (def decodedPayload (base64/decode paddedPayload))      
-    {decodedPayload su/NonBlankString} 
-    (def jsonPayLoad (json/parse-string decodedPayload))
-    (def email (get-in jsonPayLoad ["email"]))
-    (str email)))
-
 ;; TODO - are these general enough to move to `metabase.util`?
 (defn- email->domain ^String [email]
   (last (re-find #"^.*@(.*$)" email)))
 
 (defn- email-in-domain? ^Boolean [email domain]
-  {:pre [(u/is-email? email)]}
+  {:pre [(u/email? email)]}
   (= (email->domain email) domain))
 
 (defn- autocreate-user-allowed-for-email? [email]
@@ -233,38 +201,27 @@
     (throw (ex-info "You'll need an administrator to create a Metabase account before you can use Google to log in."
              {:status-code 428}))))
 
-(defn- softheon-auth-create-new-user! [first-name last-name email]
+(defn- google-auth-create-new-user! [first-name last-name email]
   (check-autocreate-user-allowed-for-email email)
   ;; this will just give the user a random password; they can go reset it if they ever change their mind and want to
   ;; log in without Google Auth; this lets us keep the NOT NULL constraints on password / salt without having to make
   ;; things hairy and only enforce those for non-Google Auth users
   (user/create-new-google-auth-user! first-name last-name email))
 
-(defn- softheon-auth-fetch-or-create-user! [first-name last-name email]
+(defn- google-auth-fetch-or-create-user! [first-name last-name email]
   (if-let [user (or (db/select-one [User :id :last_login] :email email)
-                    (softheon-auth-create-new-user! first-name last-name email))]
+                    (google-auth-create-new-user! first-name last-name email))]
     {:id (create-session! user)}))
 
 (api/defendpoint POST "/google_auth"
   "Login with Google Auth."
   [:as {{:keys [token]} :body, remote-address :remote-addr}]
   {token su/NonBlankString}
-  (log/info token)
   (throttle/check (login-throttlers :ip-address) remote-address)
   ;; Verify the token is valid with Google
   (let [{:keys [given_name family_name email]} (google-auth-token-info token)]
-    (log/info "Successfully authenticated Google Auth token for:" given_name family_name email)
-    (softheon-auth-fetch-or-create-user! given_name family_name email)))
-
-(api/defendpoint POST "/softheon_auth"
- "Login with Softheon Auth."
-  [:as {{:keys [token access_token]} :body, remote-address :remote-addr}]
-  {token su/NonBlankString}
-  (throttle/check (login-throttlers :ip-address) remote-address)
-  ;; Verify the token is valid with Softheon
-  (let [email (softheon-auth-token-info token access_token)]
-    (log/info "Successfully authenticated Softheon Auth token for:" email)
-    (softheon-auth-fetch-or-create-user! email email email)))
+    (log/info "Successfully authenticated Google Auth token for:" given_name family_name)
+    (google-auth-fetch-or-create-user! given_name family_name email)))
 
 
 (api/define-routes)

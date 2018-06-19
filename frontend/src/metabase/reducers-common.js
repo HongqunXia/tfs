@@ -10,19 +10,17 @@ import metadata from "metabase/redux/metadata";
 import requests from "metabase/redux/requests";
 import settings from "metabase/redux/settings";
 import undo from "metabase/redux/undo";
-import openid from "metabase/redux/openid";
 
 /* user */
 import { currentUser } from "metabase/redux/user";
 
 export default {
-    // global reducers
-    app,
-    auth,
-    currentUser,
-    metadata,
-    requests,
-    settings,
-    undo,
-    openid
+  // global reducers
+  app,
+  auth,
+  currentUser,
+  metadata,
+  requests,
+  settings,
+  undo,
 };

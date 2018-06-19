@@ -15,8 +15,6 @@ export default class SettingsSingleSignOnForm extends Component {
     (this.onCheckboxClicked = this.onCheckboxClicked.bind(this)),
       (this.saveChanges = this.saveChanges.bind(this)),
       (this.clientIDChanged = this.clientIDChanged.bind(this)),
-      (this.identityUriChanged = this.identityUriChanged.bind(this)),
-      (this.apiSecretChanged = this.apiSecretChanged.bind(this)),
       (this.domainChanged = this.domainChanged.bind(this));
   }
 
@@ -28,8 +26,6 @@ export default class SettingsSingleSignOnForm extends Component {
   componentWillMount() {
     let { elements } = this.props,
       clientID = _.findWhere(elements, { key: "google-auth-client-id" }),
-      identityUri = _.findWhere(elements, { key: "identity-server-uri" }),
-      apiSecret = _.findWhere(elements, { key: "api-secret" }),
       domain = _.findWhere(elements, {
         key: "google-auth-auto-create-accounts-domain",
       });
@@ -40,10 +36,6 @@ export default class SettingsSingleSignOnForm extends Component {
       clientIDValue: clientID.value,
       domainValue: domain.value,
       recentlySaved: false,
-      identityUri: identityUri,
-      identityUriValue: identityUri.value,
-      apiSecret: apiSecret,
-      apiSecretValue: apiSecret.value
     });
   }
 
@@ -55,25 +47,6 @@ export default class SettingsSingleSignOnForm extends Component {
       recentlySaved: false,
     });
   }
-
-  updateIdentityUri(newValue) {
-    if (newValue === this.state.identityUriValue) return;
-
-    this.setState({
-      identityUriValue: newValue && newValue.length ? newValue : null,
-      recentlySaved: false,
-    });
-  }
-
-  updateApiSecret(newValue) {
-    if (newValue === this.state.apiSecretValue) return;
-
-    this.setState({
-      apiSecretValue: newValue && newValue.length ? newValue : null,
-      recentlySaved: false,
-    });
-  }
-
 
   updateDomain(newValue) {
     if (newValue === this.state.domain.value) return;
@@ -88,20 +61,12 @@ export default class SettingsSingleSignOnForm extends Component {
     return this.state.clientID.value !== this.state.clientIDValue;
   }
 
-  identityUriChanged() {
-    return this.state.identityUri.value !== this.state.identityUriValue;
-  }
-
-  apiSecretChanged() {
-    return this.state.apiSecret.value !== this.state.apiSecretValue;
-  }
-
   domainChanged() {
     return this.state.domain.value !== this.state.domainValue;
   }
 
   saveChanges() {
-    let { clientID, clientIDValue, domain, domainValue, identityUri, identityUriValue, apiSecret, apiSecretValue } = this.state;
+    let { clientID, clientIDValue, domain, domainValue } = this.state;
 
     if (this.clientIDChanged()) {
       this.props.updateSetting(clientID, clientIDValue);
@@ -112,32 +77,12 @@ export default class SettingsSingleSignOnForm extends Component {
         recentlySaved: true,
       });
     }
-    
+
     if (this.domainChanged()) {
       this.props.updateSetting(domain, domainValue);
       this.setState({
         domain: {
           value: domainValue,
-        },
-        recentlySaved: true,
-      });
-    }
-
-    if(this.identityUriChanged()) {
-      this.props.updateSetting(identityUri, identityUriValue);
-      this.setState({
-        identityUri: {
-          value: identityUriValue,
-        },
-        recentlySaved: true,
-      });
-    }
-
-    if(this.apiSecretChanged()) {
-      this.props.updateSetting(apiSecret, apiSecretValue);
-      this.setState({
-        apiSecret: {
-          value: apiSecretValue,
         },
         recentlySaved: true,
       });
@@ -153,7 +98,7 @@ export default class SettingsSingleSignOnForm extends Component {
   }
 
   render() {
-    let hasChanges = this.domainChanged() || this.clientIDChanged() || this.identityUriChanged() || this.apiSecretChanged(),
+    let hasChanges = this.domainChanged() || this.clientIDChanged(),
       hasClientID = this.state.clientIDValue;
 
     return (
@@ -162,44 +107,55 @@ export default class SettingsSingleSignOnForm extends Component {
           <Breadcrumbs
             crumbs={[
               [t`Authentication`, "/admin/settings/authentication"],
-              [t`Softheon Sign-In`],
+              [t`Google Sign-In`],
             ]}
             className="mb2"
           />
-          <h2>{t`Sign in with Softheon`}</h2>
+          <h2>{t`Sign in with Google`}</h2>
           <p className="text-grey-4">
-            {t`Allows users with existing Foundry accounts to login with a Softheon account that matches their email address in addition to their Metabase username and password.`}
+            {t`Allows users with existing Metabase accounts to login with a Google account that matches their email address in addition to their Metabase username and password.`}
+          </p>
+          <p className="text-grey-4">
+            {jt`To allow users to sign in with Google you'll need to give Metabase a Google Developers console application client ID. It only takes a few steps and instructions on how to create a key can be found ${(
+              <a
+                className="link"
+                href="https://developers.google.com/identity/sign-in/web/devconsole-project"
+                target="_blank"
+              >
+                here.
+              </a>
+            )}`}
           </p>
           <Input
             className="SettingsInput AdminInput bordered rounded h3"
             type="text"
             value={this.state.clientIDValue}
-            placeholder={t`Your Softheon client ID`}
+            placeholder={t`Your Google client ID`}
             onChange={event => this.updateClientID(event.target.value)}
           />
-          <Input
-            className="SettingsInput AdminInput bordered rounded h3"
-            type="text"
-            value={this.state.identityUriValue}
-            placeholder={t`Softheon Identity Server URI`}
-            onChange={event => this.updateIdentityUri(event.target.value)}
-          />
-          <Input
-            className="SettingsInput AdminInput bordered rounded h3"
-            type="text"
-            value={this.state.apiSecretValue}
-            placeholder={t`Softheon API Secret`}
-            onChange={event => this.updateApiSecret(event.target.value)}
-          />
-          <div>
-            <button
-              className={cx("Button mr2", { "Button--primary": hasChanges })}
-              disabled={!hasChanges}
-              onClick={this.saveChanges}
-            >
-              {this.state.recentlySaved ? t`Changes saved!` : t`Save Changes`}
-            </button>
+          <div className="py3">
+            <div className="flex align-center">
+              <p className="text-grey-4">{t`Allow users to sign up on their own if their Google account email address is from:`}</p>
+            </div>
+            <div className="mt1 bordered rounded inline-block">
+              <div className="inline-block px2 h2">@</div>
+              <Input
+                className="SettingsInput inline-block AdminInput h3 border-left"
+                type="text"
+                value={this.state.domainValue}
+                onChange={event => this.updateDomain(event.target.value)}
+                disabled={!hasClientID}
+              />
+            </div>
           </div>
+
+          <button
+            className={cx("Button mr2", { "Button--primary": hasChanges })}
+            disabled={!hasChanges}
+            onClick={this.saveChanges}
+          >
+            {this.state.recentlySaved ? t`Changes saved!` : t`Save Changes`}
+          </button>
         </div>
       </form>
     );
